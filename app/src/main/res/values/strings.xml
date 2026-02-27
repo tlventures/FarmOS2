@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App Name -->
+    <string name="app_name">AgriEdge Link</string>
+    
+    <!-- Common -->
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="close">Close</string>
+    <string name="save">Save</string>
+    <string name="back">Back</string>
+    <string name="next">Next</string>
+    <string name="loading">Loading…</string>
+    <string name="error">Error</string>
+    <string name="retry">Retry</string>
+    
+    <!-- Home Screen -->
+    <string name="welcome_title">Welcome to AgriEdge Link</string>
+    <string name="welcome_subtitle">AI-powered crop disease diagnosis and market connectivity</string>
+    <string name="diagnose_disease">Diagnose Disease</string>
+    <string name="diagnose_description">Capture a leaf photo to identify crop diseases</string>
+    <string name="view_history">View History</string>
+    <string name="history_description">See your past diagnoses and treatments</string>
+    <string name="market">Market</string>
+    <string name="market_description">Connect with buyers and find services</string>
+    
+    <!-- Navigation Drawer -->
+    <string name="nav_home">Home</string>
+    <string name="nav_diagnose">Diagnose</string>
+    <string name="nav_history">History</string>
+    <string name="nav_market">Market</string>
+    <string name="nav_profile">Profile</string>
+    <string name="nav_settings">Settings</string>
+    <string name="nav_notifications">Notifications</string>
+    <string name="nav_logout">Logout</string>
+    
+    <!-- Settings -->
+    <string name="settings_title">Settings</string>
+    <string name="language_settings">Language</string>
+    <string name="select_language">Select Language</string>
+    <string name="sync_settings">Sync Settings</string>
+    <string name="wifi_only">Sync on WiFi only</string>
+    <string name="auto_sync">Automatic sync</string>
+    <string name="notification_settings">Notifications</string>
+    <string name="enable_notifications">Enable notifications</string>
+    <string name="transaction_notifications">Transaction updates</string>
+    <string name="reminder_notifications">Pickup reminders</string>
+    
+    <!-- Languages -->
+    <string name="lang_english">English</string>
+    <string name="lang_hindi">हिंदी (Hindi)</string>
+    <string name="lang_marathi">मराठी (Marathi)</string>
+    <string name="lang_tamil">தமிழ் (Tamil)</string>
+    <string name="lang_telugu">తెలుగు (Telugu)</string>
+    <string name="lang_kannada">ಕನ್ನಡ (Kannada)</string>
+    <string name="lang_bengali">বাংলা (Bengali)</string>
+    
+    <!-- Crop Types -->
+    <string name="select_crop_type">Select Crop Type</string>
+    <string name="crop_rice">Rice</string>
+    <string name="crop_wheat">Wheat</string>
+    <string name="crop_tomato">Tomato</string>
+    <string name="crop_potato">Potato</string>
+    <string name="crop_cotton">Cotton</string>
+    <string name="crop_sugarcane">Sugarcane</string>
+    
+    <!-- Camera -->
+    <string name="camera_title">Capture Leaf Image</string>
+    <string name="camera_guidance_center">Center the leaf in frame</string>
+    <string name="camera_guidance_closer">Move closer</string>
+    <string name="camera_guidance_lighting">Improve lighting</string>
+    <string name="camera_guidance_ready">Ready to capture</string>
+    <string name="capture">Capture</string>
+    <string name="retake">Retake</string>
+    
+    <!-- Market -->
+    <string name="cold_storage">Cold Storage</string>
+    <string name="cold_storage_description">Find nearby cold storage facilities</string>
+    <string name="equipment_rental">Equipment Rental</string>
+    <string name="equipment_rental_description">Rent tractors and farm equipment</string>
+    <string name="search_radius">Search Radius (km)</string>
+    <string name="search">Search</string>
+    <string name="facility_name">Facility Name</string>
+    <string name="daily_rate">Daily Rate</string>
+    <string name="available_capacity">Available Capacity</string>
+    <string name="distance">Distance</string>
+    <string name="rating">Rating</string>
+    <string name="book_now">Book Now</string>
+    <string name="equipment_type">Equipment Type</string>
+    <string name="tractor">Tractor</string>
+    <string name="sprayer">Sprayer</string>
+    <string name="harvester">Harvester</string>
+    <string name="rental_duration">Rental Duration (days)</string>
+    <string name="specifications">Specifications</string>
+    <string name="horsepower">Horsepower</string>
+    <string name="delivery_available">Delivery Available</string>
+</resources>

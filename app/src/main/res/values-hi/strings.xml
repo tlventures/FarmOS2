@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App Name -->
+    <string name="app_name">एग्रीएज लिंक</string>
+    
+    <!-- Common -->
+    <string name="ok">ठीक है</string>
+    <string name="cancel">रद्द करें</string>
+    <string name="close">बंद करें</string>
+    <string name="save">सहेजें</string>
+    <string name="back">वापस</string>
+    <string name="next">आगे</string>
+    <string name="loading">लोड हो रहा है…</string>
+    <string name="error">त्रुटि</string>
+    <string name="retry">पुनः प्रयास करें</string>
+    
+    <!-- Home Screen -->
+    <string name="welcome_title">एग्रीएज लिंक में आपका स्वागत है</string>
+    <string name="welcome_subtitle">एआई-संचालित फसल रोग निदान और बाजार कनेक्टिविटी</string>
+    <string name="diagnose_disease">रोग की जांच करें</string>
+    <string name="diagnose_description">फसल रोगों की पहचान के लिए पत्ती की फोटो लें</string>
+    <string name="view_history">इतिहास देखें</string>
+    <string name="history_description">अपने पिछले निदान और उपचार देखें</string>
+    <string name="market">बाजार</string>
+    <string name="market_description">खरीदारों से जुड़ें और सेवाएं खोजें</string>
+    
+    <!-- Navigation Drawer -->
+    <string name="nav_home">होम</string>
+    <string name="nav_diagnose">निदान</string>
+    <string name="nav_history">इतिहास</string>
+    <string name="nav_market">बाजार</string>
+    <string name="nav_profile">प्रोफ़ाइल</string>
+    <string name="nav_settings">सेटिंग्स</string>
+    <string name="nav_notifications">सूचनाएं</string>
+    <string name="nav_logout">लॉग आउट</string>
+    
+    <!-- Settings -->
+    <string name="settings_title">सेटिंग्स</string>
+    <string name="language_settings">भाषा</string>
+    <string name="select_language">भाषा चुनें</string>
+    <string name="sync_settings">सिंक सेटिंग्स</string>
+    <string name="wifi_only">केवल वाईफाई पर सिंक करें</string>
+    <string name="auto_sync">स्वचालित सिंक</string>
+    <string name="notification_settings">सूचनाएं</string>
+    <string name="enable_notifications">सूचनाएं सक्षम करें</string>
+    <string name="transaction_notifications">लेनदेन अपडेट</string>
+    <string name="reminder_notifications">पिकअप रिमाइंडर</string>
+    
+    <!-- Crop Types -->
+    <string name="select_crop_type">फसल का प्रकार चुनें</string>
+    <string name="crop_rice">चावल</string>
+    <string name="crop_wheat">गेहूं</string>
+    <string name="crop_tomato">टमाटर</string>
+    <string name="crop_potato">आलू</string>
+    <string name="crop_cotton">कपास</string>
+    <string name="crop_sugarcane">गन्ना</string>
+    
+    <!-- Camera -->
+    <string name="camera_title">पत्ती की छवि कैप्चर करें</string>
+    <string name="camera_guidance_center">पत्ती को फ्रेम में केंद्रित करें</string>
+    <string name="camera_guidance_closer">करीब जाएं</string>
+    <string name="camera_guidance_lighting">प्रकाश में सुधार करें</string>
+    <string name="camera_guidance_ready">कैप्चर के लिए तैयार</string>
+    <string name="capture">कैप्चर करें</string>
+    <string name="retake">फिर से लें</string>
+    
+    <!-- Market -->
+    <string name="cold_storage">कोल्ड स्टोरेज</string>
+    <string name="cold_storage_description">नजदीकी कोल्ड स्टोरेज सुविधाएं खोजें</string>
+    <string name="equipment_rental">उपकरण किराया</string>
+    <string name="equipment_rental_description">ट्रैक्टर और कृषि उपकरण किराए पर लें</string>
+    <string name="search_radius">खोज त्रिज्या (किमी)</string>
+    <string name="search">खोजें</string>
+    <string name="facility_name">सुविधा का नाम</string>
+    <string name="daily_rate">दैनिक दर</string>
+    <string name="available_capacity">उपलब्ध क्षमता</string>
+    <string name="distance">दूरी</string>
+    <string name="rating">रेटिंग</string>
+    <string name="book_now">अभी बुक करें</string>
+    <string name="equipment_type">उपकरण प्रकार</string>
+    <string name="tractor">ट्रैक्टर</string>
+    <string name="sprayer">स्प्रेयर</string>
+    <string name="harvester">हार्वेस्टर</string>
+    <string name="rental_duration">किराये की अवधि (दिन)</string>
+    <string name="specifications">विनिर्देश</string>
+    <string name="horsepower">अश्वशक्ति</string>
+    <string name="delivery_available">डिलीवरी उपलब्ध</string>
+</resources>
