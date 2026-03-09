@@ -18,14 +18,15 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 /**
- * Stage 1 classifier: Generic image recognition using MobileNet V2.
+ * Stage 1 classifier: Generic image recognition using EfficientNet-Lite2.
  *
  * Determines whether an image is agriculture-related (leaf, crop, plant, fruit, vegetable)
  * and attempts to auto-detect the crop type.
  *
- * Uses a quantized MobileNet V2 model trained on ImageNet (1000 classes).
+ * Uses EfficientNet-Lite2 int8 quantized (260×260, 77.5% top-1 ImageNet accuracy).
+ * Upgrade from MobileNet V2 1.0 (71.8%) — same pipeline, higher accuracy.
  * If the model file is not available, falls back to heuristic-based detection
- * using the existing ImagePreprocessor's green-pixel analysis.
+ * using green-pixel HSV analysis.
  */
 @Singleton
 class GenericImageClassifier @Inject constructor(
@@ -40,14 +41,14 @@ class GenericImageClassifier @Inject constructor(
 
     companion object {
         private const val TAG = "GenericImageClassifier"
-        private const val MODEL_PATH = "models/mobilenet_v2_1.0_224_quant.tflite"
-        private const val LABELS_PATH = "models/mobilenet_v2_labels.txt"
+        private const val MODEL_PATH = "models/efficientnet_lite2_int8.tflite"
+        private const val LABELS_PATH = "models/efficientnet_labels.txt"
         private const val MAPPING_PATH = "models/agriculture_label_mapping.json"
-        private const val INPUT_SIZE = 224
-        private const val PIXEL_SIZE = 3 // RGB
+        private const val INPUT_SIZE = 260  // EfficientNet-Lite2 native input size
+        private const val PIXEL_SIZE = 3    // RGB
         private const val NUM_THREADS = 4
-        private const val AGRICULTURE_THRESHOLD = 0.12f
-        private const val CROP_TYPE_THRESHOLD = 0.08f
+        private const val AGRICULTURE_THRESHOLD = 0.10f  // Tuned for EfficientNet's sharper predictions
+        private const val CROP_TYPE_THRESHOLD = 0.06f
         private const val TOP_K = 10
     }
 
@@ -105,8 +106,10 @@ class GenericImageClassifier @Inject constructor(
         // Preprocess image
         val inputBuffer = preprocessImage(bitmap)
 
-        // Run inference
-        val outputArray = Array(1) { ByteArray(labels.size) }
+        // Dynamically size the output buffer from the model's own output tensor
+        // (EfficientNet-Lite outputs 1000 classes; MobileNet V2 outputs 1001 with background)
+        val outputSize = interpreter!!.getOutputTensor(0).shape().last()
+        val outputArray = Array(1) { ByteArray(outputSize) }
         interpreter!!.run(inputBuffer, outputArray)
 
         val inferenceTime = System.currentTimeMillis() - startTime
@@ -116,7 +119,7 @@ class GenericImageClassifier @Inject constructor(
     }
 
     /**
-     * Preprocess bitmap for MobileNet V2 (quantized model expects uint8 0-255).
+     * Preprocess bitmap for EfficientNet-Lite2 (int8 quantized, 260×260, uint8 0-255 input).
      */
     private fun preprocessImage(bitmap: Bitmap): ByteBuffer {
         val scaledBitmap = Bitmap.createScaledBitmap(bitmap, INPUT_SIZE, INPUT_SIZE, true)

@@ -77,64 +77,64 @@ class LeafDetectionAnalyzer(
         if (greenRegion == null) {
             return GuidanceMessage(
                 type = GuidanceType.NO_LEAF_DETECTED,
-                message = "No leaf detected. Please point camera at a leaf.",
+                message = "No leaf detected — point the camera directly at a crop leaf.",
                 confidence = 0f
             )
         }
-        
+
         // Calculate leaf size ratio
         val leafArea = greenRegion.width() * greenRegion.height()
         val frameArea = width * height
         val leafSizeRatio = leafArea.toFloat() / frameArea
-        
+
         // Check brightness
         val brightness = calculateAverageBrightness(bitmap, greenRegion)
-        
+
         // Generate guidance based on analysis
         return when {
             brightness < MIN_BRIGHTNESS -> GuidanceMessage(
                 type = GuidanceType.IMPROVE_LIGHTING,
-                message = "Too dark. Improve lighting or use flash.",
+                message = "Too dark — move to a brighter area or use flash.",
                 confidence = 0.5f
             )
-            
+
             leafSizeRatio < MIN_LEAF_SIZE_RATIO -> GuidanceMessage(
                 type = GuidanceType.MOVE_CLOSER,
-                message = "Move closer to the leaf.",
+                message = "Move closer — fill the frame with the affected leaf.",
                 confidence = 0.6f
             )
-            
+
             !isLeafCentered(greenRegion, width, height) -> GuidanceMessage(
                 type = GuidanceType.CENTER_LEAF,
-                message = "Center the leaf in the frame.",
+                message = "Center the leaf — align it with the guide circle.",
                 confidence = 0.7f
             )
-            
+
             leafSizeRatio < OPTIMAL_LEAF_SIZE_RATIO -> GuidanceMessage(
                 type = GuidanceType.MOVE_CLOSER,
-                message = "Move a bit closer for better detail.",
+                message = "Almost there — move a little closer for more detail.",
                 confidence = 0.8f
             )
-            
+
             brightness < OPTIMAL_BRIGHTNESS_MIN || brightness > OPTIMAL_BRIGHTNESS_MAX -> {
                 if (brightness < OPTIMAL_BRIGHTNESS_MIN) {
                     GuidanceMessage(
                         type = GuidanceType.IMPROVE_LIGHTING,
-                        message = "Lighting could be better. Try brighter area.",
+                        message = "Slightly dim — try moving near a window or open shade.",
                         confidence = 0.85f
                     )
                 } else {
                     GuidanceMessage(
                         type = GuidanceType.IMPROVE_LIGHTING,
-                        message = "Too bright. Avoid direct sunlight.",
+                        message = "Too bright — step into shade for a clearer image.",
                         confidence = 0.85f
                     )
                 }
             }
-            
+
             else -> GuidanceMessage(
                 type = GuidanceType.READY_TO_CAPTURE,
-                message = "Perfect! Ready to capture.",
+                message = "Perfect! Hold steady and tap Capture.",
                 confidence = 1.0f
             )
         }

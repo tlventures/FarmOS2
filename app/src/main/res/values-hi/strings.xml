@@ -64,45 +64,54 @@
     <string name="capture">कैप्चर करें</string>
     <string name="retake">फिर से लें</string>
     <string name="capture_photo">फोटो कैप्चर करें</string>
-    <string name="camera_permission_required">फोटो लेने के लिए कैमरा अनुमति आवश्यक है</string>
+    <string name="camera_permission_required">फोटो लेने के लिए कैमरा की अनुमति चाहिए। कृपया सेटिंग्स में अनुमति दें।</string>
 
     <!-- Image Input Screen -->
     <string name="image_input_title">फसल रोग की पहचान करें</string>
-    <string name="image_input_header">फसल की छवियां अपलोड करें</string>
-    <string name="image_input_description">प्रभावित फसल की फोटो लें या अपलोड करें। हमारा AI स्वचालित रूप से फसल और रोग की पहचान करेगा।</string>
+    <string name="image_input_header">प्रभावित फसल की फोटो लें</string>
+    <string name="image_input_description">रोगग्रस्त पत्ती या पौधे की 1–3 स्पष्ट फोटो लें या अपलोड करें। हमारा AI स्वचालित रूप से फसल का प्रकार और रोग पहचानेगा।</string>
+    <string name="image_input_tip">सुझाव: प्राकृतिक रोशनी में, पत्ती फ्रेम में भरी हो, सबसे प्रभावित हिस्से पर ध्यान दें</string>
     <string name="take_photo">फोटो लें</string>
     <string name="upload_from_gallery">गैलरी से अपलोड करें</string>
-    <string name="start_diagnosis">निदान शुरू करें</string>
+    <string name="start_diagnosis">रोग विश्लेषण करें</string>
     <string name="remove_image">छवि हटाएं</string>
     <string name="add_more_images">और छवियां जोड़ें</string>
-    <string name="images_selected">%1$d छवि(यां) चुनी गई</string>
+    <string name="images_selected">%1$d छवि(यां) चुनी गई — विश्लेषण के लिए तैयार</string>
+    <string name="max_images_reached">अधिकतम 3 छवियां। दूसरी जोड़ने के लिए एक हटाएं।</string>
 
     <!-- Diagnosis Processing Stages -->
     <string name="stage_validating">छवि गुणवत्ता जांच रहे हैं…</string>
-    <string name="stage_recognizing">फसल का प्रकार पहचान रहे हैं…</string>
-    <string name="stage_classifying">रोग की जांच कर रहे हैं…</string>
-    <string name="stage_backend">विशेषज्ञ प्रणाली को भेज रहे हैं…</string>
+    <string name="stage_recognizing">AI से फसल का प्रकार पहचान रहे हैं…</string>
+    <string name="stage_classifying">रोग के पैटर्न खोज रहे हैं…</string>
+    <string name="stage_backend">पुष्टि के लिए क्लाउड विशेषज्ञ से परामर्श कर रहे हैं…</string>
+    <string name="stage_saving">निदान इतिहास में सहेज रहे हैं…</string>
 
     <!-- Diagnosis Errors / Feedback -->
-    <string name="not_agriculture_error">यह छवि किसी फसल या पौधे की नहीं लगती। कृपया प्रभावित फसल की स्पष्ट फोटो अपलोड करें।</string>
-    <string name="further_analysis_needed">अधिक विश्लेषण आवश्यक है</string>
-    <string name="further_analysis_description">रोग की पहचान पर्याप्त विश्वास से नहीं हो पाई। सटीक निदान के लिए अधिक छवियां अपलोड करें।</string>
-    <string name="upload_more_images">और छवियां अपलोड करें</string>
-    <string name="backend_analysis_used">विशेषज्ञ प्रणाली (क्लाउड) द्वारा विश्लेषित</string>
+    <string name="not_agriculture_error">यह फसल या पौधे की फोटो नहीं लगती। कृपया प्रभावित पत्ती या पौधे की स्पष्ट क्लोज़-अप फोटो अपलोड करें।</string>
+    <string name="image_quality_error">छवि की गुणवत्ता बहुत कम है। सुनिश्चित करें कि फोटो अच्छी रोशनी में, फोकस में हो और पत्ती स्पष्ट दिखे।</string>
+    <string name="further_analysis_needed">अधिक जानकारी चाहिए</string>
+    <string name="further_analysis_description">इस छवि से AI पर्याप्त विश्वास के साथ रोग की पहचान नहीं कर पाया। प्रभावित क्षेत्र की 1–2 और स्पष्ट फोटो अपलोड करें — अलग-अलग कोण से लेना बेहतर रहेगा।</string>
+    <string name="upload_more_images">बेहतर परिणाम के लिए और छवियां जोड़ें</string>
+    <string name="backend_analysis_used">क्लाउड विशेषज्ञ प्रणाली द्वारा सत्यापित</string>
+    <string name="diagnosis_saved">निदान आपके इतिहास में सहेजा गया</string>
 
     <!-- Diagnosis Result Screen -->
     <string name="diagnosis_result">निदान परिणाम</string>
-    <string name="crop_detected">पहचाना गया: %1$s</string>
-    <string name="confidence_score">विश्वास स्कोर</string>
-    <string name="low_confidence_warning">कम विश्वास। पुष्टि के लिए कृषि विशेषज्ञ से परामर्श लें।</string>
-    <string name="view_treatment">उपचार की सिफारिशें देखें</string>
-    <string name="read_aloud">जोर से पढ़ें</string>
+    <string name="crop_detected">स्वतः पहचाना गया: %1$s</string>
+    <string name="confidence_score">पहचान विश्वास</string>
+    <string name="high_confidence_message">उच्च विश्वास — परिणाम विश्वसनीय है</string>
+    <string name="medium_confidence_message">मध्यम विश्वास — दूसरी छवि लेने पर विचार करें</string>
+    <string name="low_confidence_warning">कम विश्वास का परिणाम। महत्वपूर्ण निर्णयों के लिए स्थानीय कृषि अधिकारी से परामर्श लें या स्पष्ट छवियां अपलोड करें।</string>
+    <string name="view_treatment">उपचार योजना देखें</string>
+    <string name="read_aloud">परिणाम जोर से पढ़ें</string>
     <string name="crop_type_label">फसल का प्रकार</string>
     <string name="date_label">तारीख</string>
     <string name="location_label">स्थान</string>
-    <string name="not_available">उपलब्ध नहीं</string>
+    <string name="not_available">दर्ज नहीं</string>
     <string name="images_analyzed_label">विश्लेषित छवियां</string>
     <string name="diagnosed_image">निदानित फसल छवि</string>
+    <string name="share_result">परिणाम साझा करें</string>
+    <string name="result_disclaimer">यह AI निदान केवल मार्गदर्शन के लिए है। महत्वपूर्ण निर्णयों के लिए कृषि विशेषज्ञ से परामर्श लें।</string>
     
     <!-- Market -->
     <string name="cold_storage">कोल्ड स्टोरेज</string>

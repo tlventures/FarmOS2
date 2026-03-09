@@ -21,7 +21,7 @@ class LeafDetectionAnalyzerTest {
     fun setup() {
         guidanceMessages = mutableListOf()
         analyzer = LeafDetectionAnalyzer { message ->
-            guidanceMessages.add(message)
+            guidanceMessages.add( message)
         }
     }
 
