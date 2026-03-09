@@ -101,11 +101,16 @@ class DiagnoseDiseaseUseCase @Inject constructor(
 
             // Step 3: Stage 2 — Disease classification
             stageCallback?.onStageChanged(DiagnosisStage.CLASSIFYING)
-            diseaseClassifier.initialize()
-            val classificationResult = diseaseClassifier.classify(primaryBitmap, detectedCropType)
+            val classificationResult = try {
+                diseaseClassifier.initialize()
+                diseaseClassifier.classify(primaryBitmap, detectedCropType)
+            } catch (t: Throwable) {
+                Log.w(TAG, "Stage 2 classification unavailable; marking for further analysis", t)
+                null
+            }
 
-            val topPrediction = classificationResult.topPredictions.firstOrNull()
-            val secondPrediction = classificationResult.topPredictions.getOrNull(1)
+            val topPrediction = classificationResult?.topPredictions?.firstOrNull()
+            val secondPrediction = classificationResult?.topPredictions?.getOrNull(1)
             val confidenceMargin = (topPrediction?.confidence ?: 0f) - (secondPrediction?.confidence ?: 0f)
 
             // Step 4: Evaluate confidence
@@ -114,7 +119,12 @@ class DiagnoseDiseaseUseCase @Inject constructor(
             val finalDisease: Disease
             val finalConfidence: Float
 
-            if (topPrediction != null &&
+            if (classificationResult == null) {
+                finalDisease = Disease.unidentified(detectedCropType)
+                finalConfidence = 0f
+                requiresFurtherAnalysis = true
+                backendFallbackUsed = true
+            } else if (topPrediction != null &&
                 topPrediction.confidence >= MIN_CONFIDENCE_THRESHOLD &&
                 confidenceMargin >= MIN_MARGIN_THRESHOLD
             ) {

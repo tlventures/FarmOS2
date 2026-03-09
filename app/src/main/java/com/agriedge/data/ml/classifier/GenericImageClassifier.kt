@@ -8,7 +8,6 @@ import com.agriedge.domain.model.GenericLabel
 import com.agriedge.domain.model.ImageRecognitionResult
 import org.json.JSONObject
 import org.tensorflow.lite.Interpreter
-import org.tensorflow.lite.gpu.GpuDelegate
 import java.io.FileInputStream
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
@@ -70,19 +69,12 @@ class GenericImageClassifier @Inject constructor(
             val modelBuffer = loadModelFile()
             val options = Interpreter.Options().apply {
                 setNumThreads(NUM_THREADS)
-                // Try GPU delegate with default options (same pattern as DiseaseClassifier)
-                try {
-                    addDelegate(GpuDelegate())
-                    Log.d(TAG, "GPU delegate enabled")
-                } catch (e: Exception) {
-                    Log.w(TAG, "GPU delegate failed, using CPU", e)
-                }
             }
             interpreter = Interpreter(modelBuffer, options)
             isInitialized = true
             Log.d(TAG, "GenericImageClassifier initialized successfully")
-        } catch (e: Exception) {
-            Log.e(TAG, "Failed to initialize GenericImageClassifier", e)
+        } catch (t: Throwable) {
+            Log.e(TAG, "Failed to initialize GenericImageClassifier; using heuristic fallback", t)
             // Mark as initialized even on failure — we'll use fallback
             isInitialized = true
         }

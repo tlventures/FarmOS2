@@ -3,6 +3,7 @@ package com.agriedge.data.camera
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.Rect
+import android.util.Log
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
 import kotlin.math.max
@@ -19,6 +20,7 @@ class LeafDetectionAnalyzer(
 ) : ImageAnalysis.Analyzer {
     
     companion object {
+        private const val TAG = "LeafDetectionAnalyzer"
         // Detection thresholds
         private const val MIN_LEAF_SIZE_RATIO = 0.15f  // Leaf should be at least 15% of frame
         private const val OPTIMAL_LEAF_SIZE_RATIO = 0.40f  // Optimal leaf size is 40% of frame
@@ -44,7 +46,6 @@ class LeafDetectionAnalyzer(
             // Throttle analysis to avoid excessive processing
             val currentTime = System.currentTimeMillis()
             if (currentTime - lastAnalysisTime < ANALYSIS_INTERVAL_MS) {
-                image.close()
                 return
             }
             lastAnalysisTime = currentTime
@@ -57,7 +58,9 @@ class LeafDetectionAnalyzer(
             
             // Notify listener
             onGuidanceUpdate?.invoke(guidance.message)
-            
+        } catch (e: Exception) {
+            Log.w(TAG, "Failed to analyze camera frame", e)
+            onGuidanceUpdate?.invoke(null)
         } finally {
             image.close()
         }

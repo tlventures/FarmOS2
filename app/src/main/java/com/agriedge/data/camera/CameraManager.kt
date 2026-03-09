@@ -223,43 +223,82 @@ class CameraManager(
  * Extension function to convert ImageProxy to Bitmap.
  */
 fun ImageProxy.toBitmap(): Bitmap {
-    val buffer: ByteBuffer = planes[0].buffer
-    val bytes = ByteArray(buffer.remaining())
-    buffer.get(bytes)
-    
-    // Handle different image formats
-    return when (format) {
+    val decodedBitmap = when (format) {
         ImageFormat.JPEG -> {
-            BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+            val jpegBuffer: ByteBuffer = planes[0].buffer
+            val jpegBytes = ByteArray(jpegBuffer.remaining())
+            jpegBuffer.get(jpegBytes)
+            BitmapFactory.decodeByteArray(jpegBytes, 0, jpegBytes.size)
         }
         ImageFormat.YUV_420_888 -> {
-            // Convert YUV to JPEG then to Bitmap
-            val yuvImage = YuvImage(
-                bytes,
-                ImageFormat.NV21,
-                width,
-                height,
-                null
-            )
-            val out = ByteArrayOutputStream()
-            yuvImage.compressToJpeg(Rect(0, 0, width, height), 100, out)
-            val imageBytes = out.toByteArray()
-            BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+            val nv21 = yuv420888ToNv21()
+            val yuvImage = YuvImage(nv21, ImageFormat.NV21, width, height, null)
+            ByteArrayOutputStream().use { out ->
+                yuvImage.compressToJpeg(Rect(0, 0, width, height), 100, out)
+                val imageBytes = out.toByteArray()
+                BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+            }
         }
         else -> {
-            // Fallback: try to decode as-is
-            BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
-        }
-    }.let { bitmap ->
-        // Rotate bitmap if needed based on image rotation
-        val rotationDegrees = imageInfo.rotationDegrees
-        if (rotationDegrees != 0) {
-            val matrix = Matrix().apply {
-                postRotate(rotationDegrees.toFloat())
-            }
-            Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
-        } else {
-            bitmap
+            val fallbackBuffer: ByteBuffer = planes[0].buffer
+            val fallbackBytes = ByteArray(fallbackBuffer.remaining())
+            fallbackBuffer.get(fallbackBytes)
+            BitmapFactory.decodeByteArray(fallbackBytes, 0, fallbackBytes.size)
         }
     }
+
+    val bitmap = requireNotNull(decodedBitmap) {
+        "Failed to decode image from CameraX frame format=$format"
+    }
+
+    // Rotate bitmap if needed based on image rotation
+    val rotationDegrees = imageInfo.rotationDegrees
+    if (rotationDegrees != 0) {
+        val matrix = Matrix().apply {
+            postRotate(rotationDegrees.toFloat())
+        }
+        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
+    }
+
+    return bitmap
+}
+
+private fun ImageProxy.yuv420888ToNv21(): ByteArray {
+    val imageWidth = width
+    val imageHeight = height
+    val ySize = imageWidth * imageHeight
+    val uvSize = imageWidth * imageHeight / 2
+    val nv21 = ByteArray(ySize + uvSize)
+
+    val yPlane = planes[0]
+    val uPlane = planes[1]
+    val vPlane = planes[2]
+
+    val yBuffer = yPlane.buffer
+    val uBuffer = uPlane.buffer
+    val vBuffer = vPlane.buffer
+
+    var outputOffset = 0
+
+    for (row in 0 until imageHeight) {
+        val rowStart = row * yPlane.rowStride
+        for (col in 0 until imageWidth) {
+            nv21[outputOffset++] = yBuffer.get(rowStart + col * yPlane.pixelStride)
+        }
+    }
+
+    val uvHeight = imageHeight / 2
+    val uvWidth = imageWidth / 2
+    for (row in 0 until uvHeight) {
+        val uRowStart = row * uPlane.rowStride
+        val vRowStart = row * vPlane.rowStride
+        for (col in 0 until uvWidth) {
+            val uIndex = uRowStart + col * uPlane.pixelStride
+            val vIndex = vRowStart + col * vPlane.pixelStride
+            nv21[outputOffset++] = vBuffer.get(vIndex)
+            nv21[outputOffset++] = uBuffer.get(uIndex)
+        }
+    }
+
+    return nv21
 }
