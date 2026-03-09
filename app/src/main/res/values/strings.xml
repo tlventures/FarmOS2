@@ -72,6 +72,81 @@
     <string name="camera_guidance_ready">Ready to capture</string>
     <string name="capture">Capture</string>
     <string name="retake">Retake</string>
+    <string name="capture_photo">Capture Photo</string>
+    <string name="camera_permission_required">Camera permission is required to take photos</string>
+
+    <!-- Image Input Screen -->
+    <string name="image_input_title">Identify Crop Disease</string>
+    <string name="image_input_header">Upload Crop Images</string>
+    <string name="image_input_description">Take a photo or upload images of the affected crop. Our AI will automatically identify the crop and disease.</string>
+    <string name="take_photo">Take Photo</string>
+    <string name="upload_from_gallery">Upload from Gallery</string>
+    <string name="start_diagnosis">Start Diagnosis</string>
+    <string name="remove_image">Remove image</string>
+    <string name="add_more_images">Add More Images</string>
+    <string name="images_selected">%1$d image(s) selected</string>
+
+    <!-- Diagnosis Processing Stages -->
+    <string name="stage_validating">Validating image quality…</string>
+    <string name="stage_recognizing">Identifying crop type…</string>
+    <string name="stage_classifying">Analyzing for disease…</string>
+    <string name="stage_backend">Sending to expert system for analysis…</string>
+
+    <!-- Diagnosis Errors / Feedback -->
+    <string name="not_agriculture_error">This image does not appear to be a crop or plant. Please upload a clear photo of the affected crop leaf or plant.</string>
+    <string name="further_analysis_needed">Further Analysis Required</string>
+    <string name="further_analysis_description">The disease could not be identified with high confidence. Upload additional images of the affected crop for a more accurate diagnosis.</string>
+    <string name="upload_more_images">Upload More Images</string>
+    <string name="backend_analysis_used">Analyzed by expert system (cloud)</string>
+
+    <!-- Diagnosis Result Screen -->
+    <string name="diagnosis_result">Diagnosis Result</string>
+    <string name="crop_detected">Detected: %1$s</string>
+    <string name="confidence_score">Confidence Score</string>
+    <string name="low_confidence_warning">Low confidence. Consider consulting an agricultural expert for confirmation.</string>
+    <string name="view_treatment">View Treatment Recommendations</string>
+    <string name="read_aloud">Read Aloud</string>
+    <string name="crop_type_label">Crop Type</string>
+    <string name="date_label">Date</string>
+    <string name="location_label">Location</string>
+    <string name="not_available">Not available</string>
+    <string name="images_analyzed_label">Images Analyzed</string>
+    <string name="diagnosed_image">Diagnosed crop image</string>
+
+    <!-- UI Labels -->
+    <string name="menu">Menu</string>
+    <string name="guest_user">Guest User</string>
+    <string name="app_language">App Language</string>
+    <string name="wifi_only_subtitle">Sync data only when connected to WiFi</string>
+    <string name="auto_sync_subtitle">Automatically sync data in background</string>
+    <string name="enable_notifications_subtitle">Receive app notifications</string>
+    <string name="transaction_notifications_subtitle">Notifications for market transactions</string>
+    <string name="reminder_notifications_subtitle">Reminders for scheduled pickups</string>
+    <string name="about">About</string>
+    <string name="app_version">App Version</string>
+    <string name="terms_of_service">Terms of Service</string>
+    <string name="terms_subtitle">View terms and conditions</string>
+    <string name="privacy_policy">Privacy Policy</string>
+    <string name="privacy_subtitle">View privacy policy</string>
+    <string name="search_listings">Search listings...</string>
+    <string name="publish_sell_request">Publish a Sell Request</string>
+    <string name="sell_request_help">Post crop, quantity, expected price, location and photos to reach buyers.</string>
+    <string name="create_sell_request">Create Sell Request</string>
+    <string name="buy_tab">Buy</string>
+    <string name="sell_tab">Sell</string>
+    <string name="rent_tab">Rent</string>
+    <string name="farmer_assistant">Farmer Assistant</string>
+    <string name="assistant_prompt">Ask agriculture questions by message, voice, and optional photo.</string>
+    <string name="assistant_prompt_short">Ask via voice or message with photo</string>
+    <string name="your_question">Your question</string>
+    <string name="add_photo">Add Photo</string>
+    <string name="remove_photo">Remove Photo</string>
+    <string name="photo_attached">Photo attached</string>
+    <string name="send_message">Send</string>
+    <string name="assistant_answer">Assistant Answer</string>
+    <string name="enter_question">Please enter a question</string>
+    <string name="photo_uploaded">Photo uploaded</string>
+    <string name="assistant_fallback_error">Assistant error: %1$s</string>
     
     <!-- Market -->
     <string name="cold_storage">Cold Storage</string>

@@ -2,6 +2,7 @@ package com.agriedge.di
 
 import android.content.Context
 import com.agriedge.data.ml.classifier.DiseaseClassifier
+import com.agriedge.data.ml.classifier.GenericImageClassifier
 import com.agriedge.data.ml.preprocessor.ImagePreprocessor
 import dagger.Module
 import dagger.Provides
@@ -29,5 +30,13 @@ object MLModule {
     @Singleton
     fun provideImagePreprocessor(): ImagePreprocessor {
         return ImagePreprocessor()
+    }
+
+    @Provides
+    @Singleton
+    fun provideGenericImageClassifier(
+        @ApplicationContext context: Context
+    ): GenericImageClassifier {
+        return GenericImageClassifier(context)
     }
 }

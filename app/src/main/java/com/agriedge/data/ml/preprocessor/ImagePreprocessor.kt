@@ -34,11 +34,12 @@ class ImagePreprocessor {
      * @return ValidationResult indicating if image is valid or reasons for rejection
      */
     fun validate(bitmap: Bitmap): ValidationResult {
+        // Note: checkLeafPresence removed from standard pipeline.
+        // Agriculture validation is now handled by GenericImageClassifier (Stage 1).
         val checks = listOf(
             checkResolution(bitmap),
             checkBrightness(bitmap),
-            checkBlur(bitmap),
-            checkLeafPresence(bitmap)
+            checkBlur(bitmap)
         )
         
         val failedChecks = checks.filter { !it.passed }
@@ -138,8 +139,9 @@ class ImagePreprocessor {
     /**
      * Checks if image contains sufficient green regions (leaf presence).
      * Uses HSV color space for robust green detection.
+     * Public for optional use — no longer part of the standard validate() pipeline.
      */
-    private fun checkLeafPresence(bitmap: Bitmap): QualityCheck {
+    fun checkLeafPresence(bitmap: Bitmap): QualityCheck {
         var greenPixels = 0
         var totalPixels = 0
         

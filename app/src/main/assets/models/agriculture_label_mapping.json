@@ -1,0 +1,34 @@
+{
+  "agriculture_labels": [
+    "leaf", "plant", "flower", "fruit", "vegetable", "mushroom",
+    "corn", "ear", "rapeseed", "daisy", "sunflower", "bell_pepper",
+    "cucumber", "cauliflower", "broccoli", "zucchini", "spaghetti_squash",
+    "butternut_squash", "artichoke", "cardoon", "head_cabbage",
+    "banana", "strawberry", "orange", "lemon", "fig", "pineapple",
+    "jackfruit", "custard_apple", "pomegranate", "hay", "pot",
+    "acorn_squash", "mashed_potato", "rice", "dough",
+    "hip", "buckeye", "agaric", "gyromitra", "stinkhorn", "earthstar",
+    "hen-of-the-woods", "bolete", "coral_fungus",
+    "flatworm", "slug", "snail", "earthworm", "bee", "ant",
+    "grasshopper", "cricket", "ladybug", "green_mamba",
+    "garden_spider", "barn_spider", "black_widow",
+    "tractor", "thresher", "harvester", "plow", "lawn_mower",
+    "chainsaw", "hatchet", "cleaver",
+    "greenhouse", "barn", "picket_fence"
+  ],
+  "crop_type_mapping": {
+    "RICE":       ["rice", "paddy", "rice_paddy", "grain"],
+    "WHEAT":      ["wheat", "ear", "sheaf", "grain", "hay"],
+    "TOMATO":     ["tomato", "cherry_tomato"],
+    "POTATO":     ["potato", "sweet_potato", "mashed_potato"],
+    "COTTON":     ["cotton", "cotton_plant"],
+    "SUGARCANE":  ["sugarcane", "cane", "sugar_cane"]
+  },
+  "generic_plant_labels": [
+    "leaf", "plant", "flower", "shrub", "herb", "grass", "vine",
+    "seedling", "tree", "bud", "seed", "stem", "root",
+    "daisy", "sunflower", "rapeseed", "mushroom",
+    "pot", "flowerpot", "greenhouse",
+    "hay", "straw", "crop"
+  ]
+}

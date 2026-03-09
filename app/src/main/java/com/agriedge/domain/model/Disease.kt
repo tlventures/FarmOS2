@@ -12,4 +12,17 @@ data class Disease(
     val cropType: CropType,
     val description: String,
     val symptoms: List<String>
-)
+) {
+    companion object {
+        /** Factory for creating an "unidentified disease" placeholder */
+        fun unidentified(cropType: CropType) = Disease(
+            id = "unidentified",
+            commonName = "Unidentified Disease",
+            scientificName = "Unknown",
+            localizedName = "अज्ञात रोग",
+            cropType = cropType,
+            description = "The disease could not be identified with sufficient confidence. Further analysis is required.",
+            symptoms = emptyList()
+        )
+    }
+}

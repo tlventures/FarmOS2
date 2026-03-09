@@ -11,9 +11,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.agriedge.link.R
 import com.agriedge.presentation.auth.AuthViewModel
 
 data class DrawerMenuItem(
@@ -36,13 +38,13 @@ fun AppDrawer(
     val currentUser = authState.currentUser
     
     val menuItems = listOf(
-        DrawerMenuItem(Icons.Default.Home, "Home", "home"),
-        DrawerMenuItem(Icons.Default.CameraAlt, "Diagnose", "crop_selection"),
-        DrawerMenuItem(Icons.Default.History, "History", "diagnosis_history"),
-        DrawerMenuItem(Icons.Default.ShoppingCart, "Market", "market"),
-        DrawerMenuItem(Icons.Default.Person, "Profile", "profile"),
-        DrawerMenuItem(Icons.Default.Settings, "Settings", "settings"),
-        DrawerMenuItem(Icons.Default.Notifications, "Notifications", null)
+        DrawerMenuItem(Icons.Default.Home, stringResource(id = R.string.nav_home), "home"),
+        DrawerMenuItem(Icons.Default.CameraAlt, stringResource(id = R.string.nav_diagnose), "image_input"),
+        DrawerMenuItem(Icons.Default.History, stringResource(id = R.string.nav_history), "diagnosis_history"),
+        DrawerMenuItem(Icons.Default.ShoppingCart, stringResource(id = R.string.nav_market), "market"),
+        DrawerMenuItem(Icons.Default.Person, stringResource(id = R.string.nav_profile), "profile"),
+        DrawerMenuItem(Icons.Default.Settings, stringResource(id = R.string.nav_settings), "settings"),
+        DrawerMenuItem(Icons.Default.Notifications, stringResource(id = R.string.nav_notifications), null)
     )
 
     ModalDrawerSheet(modifier = modifier) {
@@ -62,13 +64,13 @@ fun AppDrawer(
                 )
                 Spacer(modifier = Modifier.height(12.dp))
                 Text(
-                    text = "AgriEdge Link",
+                    text = stringResource(id = R.string.app_name),
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onPrimaryContainer
                 )
                 Text(
-                    text = currentUser?.name ?: "Guest User",
+                    text = currentUser?.name ?: stringResource(id = R.string.guest_user),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f)
                 )
@@ -101,8 +103,8 @@ fun AppDrawer(
         // Logout
         Divider(modifier = Modifier.padding(horizontal = 12.dp))
         NavigationDrawerItem(
-            icon = { Icon(Icons.Default.Logout, contentDescription = "Logout") },
-            label = { Text("Logout") },
+            icon = { Icon(Icons.Default.Logout, contentDescription = stringResource(id = R.string.nav_logout)) },
+            label = { Text(stringResource(id = R.string.nav_logout)) },
             selected = false,
             onClick = {
                 authViewModel.logout()

@@ -165,7 +165,8 @@ class GetDiagnosisHistoryUseCaseTest {
                 symptoms = listOf("Symptom 1", "Symptom 2")
             ),
             confidence = 0.85f,
-            imagePath = "/storage/images/$id.jpg",
+            imagePaths = listOf("/storage/images/$id.jpg"),
+            primaryImagePath = "/storage/images/$id.jpg",
             location = Location("Village", "District", "State", 21.0, 74.5),
             synced = false
         )

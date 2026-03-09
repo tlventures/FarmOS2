@@ -21,11 +21,14 @@ data class DiagnosisEntity(
     val scientificName: String,
     val confidence: Float,
     val imagePath: String,
+    val additionalImagePaths: String? = null,
     val thumbnailPath: String?,
     val latitude: Double?,
     val longitude: Double?,
     val village: String?,
     val district: String?,
     val state: String?,
-    val synced: Boolean = false
+    val synced: Boolean = false,
+    val requiresFurtherAnalysis: Boolean = false,
+    val backendFallbackUsed: Boolean = false
 )

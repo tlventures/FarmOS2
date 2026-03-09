@@ -6,8 +6,8 @@ import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.DisplayName
-import org.mockito.kotlin.mock
-import org.mockito.kotlin.whenever
+import io.mockk.every
+import io.mockk.mockk
 
 @DisplayName("ImagePreprocessor Tests")
 class ImagePreprocessorTest {
@@ -138,15 +138,12 @@ class ImagePreprocessorTest {
         hasGreen: Boolean,
         isSharp: Boolean
     ): Bitmap {
-        val bitmap = mock<Bitmap>()
-        whenever(bitmap.width).thenReturn(width)
-        whenever(bitmap.height).thenReturn(height)
-        
+        val bitmap = mockk<Bitmap>(relaxed = true)
+        every { bitmap.width } returns width
+        every { bitmap.height } returns height
+
         // Mock pixel colors based on requirements
-        whenever(bitmap.getPixel(org.mockito.kotlin.any(), org.mockito.kotlin.any())).thenAnswer {
-            val x = it.getArgument<Int>(0)
-            val y = it.getArgument<Int>(1)
-            
+        every { bitmap.getPixel(any(), any()) } answers {
             if (hasGreen) {
                 // Return green pixel (RGB: 0, 128, 0)
                 Color.rgb(0, 128, 0)
@@ -155,7 +152,7 @@ class ImagePreprocessorTest {
                 Color.rgb(brightness, brightness, brightness)
             }
         }
-        
+
         return bitmap
     }
 }

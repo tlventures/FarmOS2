@@ -9,6 +9,8 @@ import com.agriedge.domain.model.Disease
 import com.agriedge.domain.model.Prediction
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.json.JSONArray
+import org.json.JSONObject
 import org.tensorflow.lite.Interpreter
 import org.tensorflow.lite.gpu.GpuDelegate
 import java.io.FileInputStream
@@ -38,19 +40,15 @@ class DiseaseClassifier @Inject constructor(
     private var interpreter: Interpreter? = null
     private var gpuDelegate: GpuDelegate? = null
     private var isInitialized = false
-    
-    // Model configuration
-    private val inputShape = intArrayOf(1, INPUT_SIZE, INPUT_SIZE, 3)
-    private val outputShape = intArrayOf(1, OUTPUT_SIZE)
-    
-    // Mock mode flag - set to true when no actual model is available
-    private var useMockMode = true
+    private var outputSize = 0
+    private var inputWidth = 224
+    private var inputHeight = 224
+    private var labelMappings: List<DiseaseLabel> = emptyList()
     
     companion object {
         private const val TAG = "DiseaseClassifier"
         private const val MODEL_PATH = "models/crop_disease_classifier.tflite"
-        private const val INPUT_SIZE = 224
-        private const val OUTPUT_SIZE = 40
+        private const val LABELS_PATH = "models/crop_disease_labels.json"
         private const val NUM_THREADS = 4
         
         // Normalization constants (ImageNet standard)
@@ -69,8 +67,18 @@ class DiseaseClassifier @Inject constructor(
         }
         
         try {
+            // Validate artifacts first. This gives deterministic diagnostics before loading.
+            val validation = validateModelArtifacts()
+            if (!validation.isReady) {
+                throw IllegalStateException(validation.issues.joinToString("; "))
+            }
+
             // Try to load the actual model
             val modelFile = loadModelFile(MODEL_PATH)
+            labelMappings = loadDiseaseLabels()
+            if (labelMappings.isEmpty()) {
+                throw IllegalStateException("Label mapping is empty at $LABELS_PATH")
+            }
             
             // Configure interpreter options
             val options = Interpreter.Options().apply {
@@ -79,8 +87,10 @@ class DiseaseClassifier @Inject constructor(
                     gpuDelegate = GpuDelegate()
                     addDelegate(gpuDelegate)
                     Log.d(TAG, "GPU delegate enabled")
-                } catch (e: Exception) {
-                    Log.w(TAG, "GPU delegate not available, using CPU", e)
+                } catch (t: Throwable) {
+                    // Some devices/runtime combos throw NoClassDefFoundError here.
+                    gpuDelegate = null
+                    Log.w(TAG, "GPU delegate not available, using CPU/NNAPI", t)
                 }
                 
                 // Enable NNAPI as fallback
@@ -89,15 +99,64 @@ class DiseaseClassifier @Inject constructor(
             }
             
             interpreter = Interpreter(modelFile, options)
-            useMockMode = false
+            val inputShape = interpreter?.getInputTensor(0)?.shape()
+            val width = inputShape?.getOrNull(2) ?: 0
+            val height = inputShape?.getOrNull(1) ?: 0
+            if (width <= 0 || height <= 0) {
+                throw IllegalStateException("Invalid model input tensor shape: ${inputShape?.contentToString()}")
+            }
+            inputWidth = width
+            inputHeight = height
+            outputSize = interpreter?.getOutputTensor(0)?.shape()?.lastOrNull() ?: 0
+            if (outputSize <= 0) {
+                throw IllegalStateException("Invalid model output tensor shape")
+            }
+            if (labelMappings.size < outputSize) {
+                throw IllegalStateException(
+                    "Label mapping count (${labelMappings.size}) is smaller than model output classes ($outputSize)"
+                )
+            }
+            Log.i(
+                TAG,
+                "TFLite model loaded successfully with input=${inputWidth}x$inputHeight outputSize=$outputSize labels=${labelMappings.size}"
+            )
             isInitialized = true
-            Log.i(TAG, "TFLite model loaded successfully")
             
         } catch (e: Exception) {
-            Log.w(TAG, "Failed to load TFLite model, using mock mode", e)
-            useMockMode = true
-            isInitialized = true
+            isInitialized = false
+            Log.e(TAG, "Failed to load production TFLite model", e)
+            throw e
         }
+    }
+
+    data class ModelValidationResult(
+        val isReady: Boolean,
+        val issues: List<String>
+    )
+
+    /**
+     * Validation hook for release checks.
+     * Ensures model + label files are available before enabling production inference.
+     */
+    fun validateModelArtifacts(): ModelValidationResult {
+        val issues = mutableListOf<String>()
+
+        try {
+            context.assets.openFd(MODEL_PATH).close()
+        } catch (e: Exception) {
+            issues.add("Missing model asset at $MODEL_PATH")
+        }
+
+        try {
+            context.assets.open(LABELS_PATH).close()
+        } catch (e: Exception) {
+            issues.add("Missing label mapping asset at $LABELS_PATH")
+        }
+
+        return ModelValidationResult(
+            isReady = issues.isEmpty(),
+            issues = issues
+        )
     }
     
     /**
@@ -114,12 +173,10 @@ class DiseaseClassifier @Inject constructor(
         if (!isInitialized) {
             throw IllegalStateException("Classifier not initialized. Call initialize() first.")
         }
-
-        if (useMockMode) {
-            return@withContext generateMockResult(cropType)
+        if (outputSize <= 0) {
+            throw IllegalStateException("Invalid classifier output size")
         }
-
-        val outputBuffer = Array(1) { FloatArray(OUTPUT_SIZE) }
+        val outputBuffer = Array(1) { FloatArray(outputSize) }
         lateinit var result: ClassificationResult
 
         val inferenceTime = measureTimeMillis {
@@ -143,21 +200,21 @@ class DiseaseClassifier @Inject constructor(
         // Resize bitmap to model input size
         val resizedBitmap = Bitmap.createScaledBitmap(
             bitmap,
-            INPUT_SIZE,
-            INPUT_SIZE,
+            inputWidth,
+            inputHeight,
             true
         )
         
         // Allocate ByteBuffer for model input
         val inputBuffer = ByteBuffer.allocateDirect(
-            4 * INPUT_SIZE * INPUT_SIZE * 3 // 4 bytes per float
+            4 * inputWidth * inputHeight * 3 // 4 bytes per float
         ).apply {
             order(ByteOrder.nativeOrder())
         }
         
         // Extract pixel values and normalize
-        val pixels = IntArray(INPUT_SIZE * INPUT_SIZE)
-        resizedBitmap.getPixels(pixels, 0, INPUT_SIZE, 0, 0, INPUT_SIZE, INPUT_SIZE)
+        val pixels = IntArray(inputWidth * inputHeight)
+        resizedBitmap.getPixels(pixels, 0, inputWidth, 0, 0, inputWidth, inputHeight)
         
         for (pixel in pixels) {
             // Extract RGB channels
@@ -182,169 +239,35 @@ class DiseaseClassifier @Inject constructor(
         output: FloatArray,
         cropType: CropType
     ): ClassificationResult {
-        // Get top 3 predictions
-        val predictions = output
-            .mapIndexed { index, confidence -> index to confidence }
+        if (output.isEmpty()) {
+            throw IllegalStateException("Model returned empty output")
+        }
+        val probabilities = softmax(output)
+        val allPredictions = probabilities
+            .mapIndexed { index, confidence -> index to confidence.coerceIn(0f, 1f) }
             .sortedByDescending { it.second }
-            .take(3)
             .map { (diseaseIndex, confidence) ->
                 Prediction(
                     disease = getDiseaseForIndex(diseaseIndex, cropType),
                     confidence = confidence
                 )
             }
-        
+
+        // If cropType is UNKNOWN, return all predictions sorted by confidence (no filtering).
+        // Otherwise, filter to crop-specific predictions.
+        val cropSpecificPredictions = if (cropType == CropType.UNKNOWN) {
+            allPredictions.take(3)
+        } else {
+            allPredictions
+                .filter { it.disease.cropType == cropType }
+                .ifEmpty { allPredictions }
+                .take(3)
+        }
+
         return ClassificationResult(
-            topPredictions = predictions,
+            topPredictions = cropSpecificPredictions,
             inferenceTime = 0L // Will be set by caller
         )
-    }
-    
-    /**
-     * Generate mock classification results for testing
-     * Simulates realistic disease detection with varying confidence scores
-     */
-    private fun generateMockResult(cropType: CropType): ClassificationResult {
-        val mockDiseases = getMockDiseasesForCrop(cropType)
-        
-        // Simulate inference time (1-3 seconds)
-        val inferenceTime = (1000L..3000L).random()
-        
-        // Generate realistic confidence scores
-        val predictions = mockDiseases.take(3).mapIndexed { index, disease ->
-            val confidence = when (index) {
-                0 -> (0.75f..0.95f).random() // Top prediction: high confidence
-                1 -> (0.10f..0.20f).random() // Second: low confidence
-                else -> (0.05f..0.10f).random() // Third: very low confidence
-            }
-            
-            Prediction(disease = disease, confidence = confidence)
-        }
-        
-        Log.d(TAG, "Mock classification: ${predictions[0].disease.commonName} (${predictions[0].confidence})")
-        
-        return ClassificationResult(
-            topPredictions = predictions,
-            inferenceTime = inferenceTime
-        )
-    }
-    
-    /**
-     * Get mock diseases for a specific crop type
-     */
-    private fun getMockDiseasesForCrop(cropType: CropType): List<Disease> {
-        return when (cropType) {
-            CropType.COTTON -> listOf(
-                Disease(
-                    id = "cotton_leaf_curl",
-                    commonName = "Cotton Leaf Curl",
-                    scientificName = "Cotton leaf curl virus",
-                    localizedName = "कपास पत्ती कर्ल",
-                    cropType = CropType.COTTON,
-                    description = "Viral disease causing leaf curling and stunted growth",
-                    symptoms = listOf("Leaf curling", "Yellowing", "Stunted growth")
-                ),
-                Disease(
-                    id = "cotton_bollworm",
-                    commonName = "Cotton Bollworm",
-                    scientificName = "Helicoverpa armigera",
-                    localizedName = "कपास बॉलवर्म",
-                    cropType = CropType.COTTON,
-                    description = "Pest infestation affecting cotton bolls",
-                    symptoms = listOf("Boll damage", "Larval presence", "Reduced yield")
-                ),
-                Disease(
-                    id = "cotton_healthy",
-                    commonName = "Healthy Cotton",
-                    scientificName = "No disease detected",
-                    localizedName = "स्वस्थ कपास",
-                    cropType = CropType.COTTON,
-                    description = "No disease or pest detected",
-                    symptoms = emptyList()
-                )
-            )
-            
-            CropType.WHEAT -> listOf(
-                Disease(
-                    id = "wheat_rust",
-                    commonName = "Wheat Rust",
-                    scientificName = "Puccinia triticina",
-                    localizedName = "गेहूं का रतुआ",
-                    cropType = CropType.WHEAT,
-                    description = "Fungal disease causing rust-colored pustules",
-                    symptoms = listOf("Orange pustules", "Leaf damage", "Reduced yield")
-                ),
-                Disease(
-                    id = "wheat_blight",
-                    commonName = "Wheat Blight",
-                    scientificName = "Bipolaris sorokiniana",
-                    localizedName = "गेहूं का झुलसा",
-                    cropType = CropType.WHEAT,
-                    description = "Fungal disease causing leaf blight",
-                    symptoms = listOf("Brown spots", "Leaf death", "Stunted growth")
-                ),
-                Disease(
-                    id = "wheat_healthy",
-                    commonName = "Healthy Wheat",
-                    scientificName = "No disease detected",
-                    localizedName = "स्वस्थ गेहूं",
-                    cropType = CropType.WHEAT,
-                    description = "No disease detected",
-                    symptoms = emptyList()
-                )
-            )
-            
-            CropType.TOMATO -> listOf(
-                Disease(
-                    id = "tomato_late_blight",
-                    commonName = "Tomato Late Blight",
-                    scientificName = "Phytophthora infestans",
-                    localizedName = "टमाटर का पछेती झुलसा",
-                    cropType = CropType.TOMATO,
-                    description = "Devastating fungal disease",
-                    symptoms = listOf("Dark spots", "Leaf death", "Fruit rot")
-                ),
-                Disease(
-                    id = "tomato_leaf_curl",
-                    commonName = "Tomato Leaf Curl",
-                    scientificName = "Tomato leaf curl virus",
-                    localizedName = "टमाटर पत्ती कर्ल",
-                    cropType = CropType.TOMATO,
-                    description = "Viral disease spread by whiteflies",
-                    symptoms = listOf("Leaf curling", "Yellowing", "Stunted growth")
-                ),
-                Disease(
-                    id = "tomato_healthy",
-                    commonName = "Healthy Tomato",
-                    scientificName = "No disease detected",
-                    localizedName = "स्वस्थ टमाटर",
-                    cropType = CropType.TOMATO,
-                    description = "No disease detected",
-                    symptoms = emptyList()
-                )
-            )
-            
-            else -> listOf(
-                Disease(
-                    id = "generic_disease",
-                    commonName = "Generic Disease",
-                    scientificName = "Unknown pathogen",
-                    localizedName = "सामान्य रोग",
-                    cropType = cropType,
-                    description = "Generic disease placeholder",
-                    symptoms = listOf("Leaf damage", "Discoloration")
-                ),
-                Disease(
-                    id = "generic_healthy",
-                    commonName = "Healthy Crop",
-                    scientificName = "No disease detected",
-                    localizedName = "स्वस्थ फसल",
-                    cropType = cropType,
-                    description = "No disease detected",
-                    symptoms = emptyList()
-                )
-            )
-        }
     }
     
     /**
@@ -352,17 +275,31 @@ class DiseaseClassifier @Inject constructor(
      * This would use actual model metadata in production
      */
     private fun getDiseaseForIndex(index: Int, cropType: CropType): Disease {
-        // In production, this would map model output indices to actual diseases
-        // For now, return a placeholder
-        return Disease(
-            id = "disease_$index",
-            commonName = "Disease $index",
-            scientificName = "Scientific name $index",
-            localizedName = "रोग $index",
-            cropType = cropType,
-            description = "Disease description",
-            symptoms = listOf("Symptom 1", "Symptom 2")
+        val mapped = labelMappings.getOrNull(index)
+        if (mapped != null) {
+            return Disease(
+                id = mapped.id,
+                commonName = mapped.commonName,
+                scientificName = mapped.scientificName,
+                localizedName = mapped.localizedName,
+                cropType = CropType.fromString(mapped.cropType)
+                    ?: cropType.takeIf { it != CropType.UNKNOWN }
+                    ?: CropType.UNKNOWN,
+                description = mapped.description,
+                symptoms = mapped.symptoms
+            )
+        }
+        throw IllegalStateException(
+            "No disease label mapping for model output index $index (labels=${labelMappings.size})"
         )
+    }
+
+    private fun softmax(logits: FloatArray): FloatArray {
+        if (logits.isEmpty()) return logits
+        val maxLogit = logits.maxOrNull() ?: 0f
+        val exps = logits.map { kotlin.math.exp((it - maxLogit).toDouble()) }
+        val sum = exps.sum().takeIf { it > 0.0 } ?: 1.0
+        return exps.map { (it / sum).toFloat() }.toFloatArray()
     }
     
     /**
@@ -376,16 +313,37 @@ class DiseaseClassifier @Inject constructor(
         val declaredLength = fileDescriptor.declaredLength
         return fileChannel.map(FileChannel.MapMode.READ_ONLY, startOffset, declaredLength)
     }
-    
-    /**
-     * Check if GPU acceleration is available
-     */
-    private fun isGpuAvailable(): Boolean {
+
+    private fun loadDiseaseLabels(): List<DiseaseLabel> {
         return try {
-            GpuDelegate()
-            true
+            val jsonText = context.assets.open(LABELS_PATH).bufferedReader().use { it.readText() }
+            val json = JSONObject(jsonText)
+            val labelsArray = json.optJSONArray("labels") ?: JSONArray()
+            buildList {
+                for (i in 0 until labelsArray.length()) {
+                    val item = labelsArray.optJSONObject(i) ?: continue
+                    add(
+                        DiseaseLabel(
+                            id = item.optString("id", "disease_$i"),
+                            commonName = item.optString("commonName", "Disease $i"),
+                            scientificName = item.optString("scientificName", "Unknown"),
+                            localizedName = item.optString("localizedName", item.optString("commonName", "Disease $i")),
+                            cropType = item.optString("cropType", "RICE"),
+                            description = item.optString("description", ""),
+                            symptoms = item.optJSONArray("symptoms")?.let { array ->
+                                buildList {
+                                    for (j in 0 until array.length()) {
+                                        add(array.optString(j))
+                                    }
+                                }
+                            } ?: emptyList()
+                        )
+                    )
+                }
+            }
         } catch (e: Exception) {
-            false
+            Log.w(TAG, "Failed to load disease label mapping", e)
+            emptyList()
         }
     }
     
@@ -402,9 +360,12 @@ class DiseaseClassifier @Inject constructor(
     }
 }
 
-/**
- * Extension function to generate random float in range
- */
-private fun ClosedFloatingPointRange<Float>.random(): Float {
-    return start + Math.random().toFloat() * (endInclusive - start)
-}
+private data class DiseaseLabel(
+    val id: String,
+    val commonName: String,
+    val scientificName: String,
+    val localizedName: String,
+    val cropType: String,
+    val description: String,
+    val symptoms: List<String>
+)

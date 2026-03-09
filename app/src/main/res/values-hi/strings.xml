@@ -63,6 +63,46 @@
     <string name="camera_guidance_ready">कैप्चर के लिए तैयार</string>
     <string name="capture">कैप्चर करें</string>
     <string name="retake">फिर से लें</string>
+    <string name="capture_photo">फोटो कैप्चर करें</string>
+    <string name="camera_permission_required">फोटो लेने के लिए कैमरा अनुमति आवश्यक है</string>
+
+    <!-- Image Input Screen -->
+    <string name="image_input_title">फसल रोग की पहचान करें</string>
+    <string name="image_input_header">फसल की छवियां अपलोड करें</string>
+    <string name="image_input_description">प्रभावित फसल की फोटो लें या अपलोड करें। हमारा AI स्वचालित रूप से फसल और रोग की पहचान करेगा।</string>
+    <string name="take_photo">फोटो लें</string>
+    <string name="upload_from_gallery">गैलरी से अपलोड करें</string>
+    <string name="start_diagnosis">निदान शुरू करें</string>
+    <string name="remove_image">छवि हटाएं</string>
+    <string name="add_more_images">और छवियां जोड़ें</string>
+    <string name="images_selected">%1$d छवि(यां) चुनी गई</string>
+
+    <!-- Diagnosis Processing Stages -->
+    <string name="stage_validating">छवि गुणवत्ता जांच रहे हैं…</string>
+    <string name="stage_recognizing">फसल का प्रकार पहचान रहे हैं…</string>
+    <string name="stage_classifying">रोग की जांच कर रहे हैं…</string>
+    <string name="stage_backend">विशेषज्ञ प्रणाली को भेज रहे हैं…</string>
+
+    <!-- Diagnosis Errors / Feedback -->
+    <string name="not_agriculture_error">यह छवि किसी फसल या पौधे की नहीं लगती। कृपया प्रभावित फसल की स्पष्ट फोटो अपलोड करें।</string>
+    <string name="further_analysis_needed">अधिक विश्लेषण आवश्यक है</string>
+    <string name="further_analysis_description">रोग की पहचान पर्याप्त विश्वास से नहीं हो पाई। सटीक निदान के लिए अधिक छवियां अपलोड करें।</string>
+    <string name="upload_more_images">और छवियां अपलोड करें</string>
+    <string name="backend_analysis_used">विशेषज्ञ प्रणाली (क्लाउड) द्वारा विश्लेषित</string>
+
+    <!-- Diagnosis Result Screen -->
+    <string name="diagnosis_result">निदान परिणाम</string>
+    <string name="crop_detected">पहचाना गया: %1$s</string>
+    <string name="confidence_score">विश्वास स्कोर</string>
+    <string name="low_confidence_warning">कम विश्वास। पुष्टि के लिए कृषि विशेषज्ञ से परामर्श लें।</string>
+    <string name="view_treatment">उपचार की सिफारिशें देखें</string>
+    <string name="read_aloud">जोर से पढ़ें</string>
+    <string name="crop_type_label">फसल का प्रकार</string>
+    <string name="date_label">तारीख</string>
+    <string name="location_label">स्थान</string>
+    <string name="not_available">उपलब्ध नहीं</string>
+    <string name="images_analyzed_label">विश्लेषित छवियां</string>
+    <string name="diagnosed_image">निदानित फसल छवि</string>
     
     <!-- Market -->
     <string name="cold_storage">कोल्ड स्टोरेज</string>
@@ -85,4 +125,44 @@
     <string name="specifications">विनिर्देश</string>
     <string name="horsepower">अश्वशक्ति</string>
     <string name="delivery_available">डिलीवरी उपलब्ध</string>
+
+    <!-- Languages -->
+    <string name="lang_english">English</string>
+    <string name="lang_hindi">हिंदी (Hindi)</string>
+    <string name="lang_telugu">తెలుగు (Telugu)</string>
+
+    <!-- UI Labels -->
+    <string name="menu">मेनू</string>
+    <string name="guest_user">अतिथि उपयोगकर्ता</string>
+    <string name="app_language">ऐप भाषा</string>
+    <string name="wifi_only_subtitle">केवल वाईफाई से कनेक्ट होने पर सिंक करें</string>
+    <string name="auto_sync_subtitle">पृष्ठभूमि में स्वचालित रूप से सिंक करें</string>
+    <string name="enable_notifications_subtitle">ऐप सूचनाएं प्राप्त करें</string>
+    <string name="transaction_notifications_subtitle">बाजार लेनदेन की सूचनाएं</string>
+    <string name="reminder_notifications_subtitle">निर्धारित पिकअप के लिए रिमाइंडर</string>
+    <string name="about">जानकारी</string>
+    <string name="app_version">ऐप संस्करण</string>
+    <string name="terms_of_service">सेवा की शर्तें</string>
+    <string name="terms_subtitle">शर्तें और नियम देखें</string>
+    <string name="privacy_policy">गोपनीयता नीति</string>
+    <string name="privacy_subtitle">गोपनीयता नीति देखें</string>
+    <string name="search_listings">लिस्टिंग खोजें...</string>
+    <string name="publish_sell_request">बिक्री अनुरोध प्रकाशित करें</string>
+    <string name="sell_request_help">खरीदारों तक पहुंचने के लिए फसल, मात्रा, अपेक्षित कीमत, स्थान और फोटो पोस्ट करें।</string>
+    <string name="create_sell_request">बिक्री अनुरोध बनाएं</string>
+    <string name="buy_tab">खरीदें</string>
+    <string name="sell_tab">बेचें</string>
+    <string name="rent_tab">किराए पर लें</string>
+    <string name="farmer_assistant">किसान सहायक</string>
+    <string name="assistant_prompt">संदेश, आवाज और वैकल्पिक फोटो से कृषि प्रश्न पूछें।</string>
+    <string name="assistant_prompt_short">आवाज/संदेश और फोटो से पूछें</string>
+    <string name="your_question">आपका प्रश्न</string>
+    <string name="add_photo">फोटो जोड़ें</string>
+    <string name="remove_photo">फोटो हटाएं</string>
+    <string name="photo_attached">फोटो संलग्न है</string>
+    <string name="send_message">भेजें</string>
+    <string name="assistant_answer">सहायक का उत्तर</string>
+    <string name="enter_question">कृपया प्रश्न दर्ज करें</string>
+    <string name="photo_uploaded">फोटो अपलोड हो गई</string>
+    <string name="assistant_fallback_error">सहायक त्रुटि: %1$s</string>
 </resources>

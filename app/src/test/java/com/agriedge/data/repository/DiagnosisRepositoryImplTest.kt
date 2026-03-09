@@ -255,7 +255,8 @@ class DiagnosisRepositoryImplTest {
                 symptoms = listOf("Leaf curling")
             ),
             confidence = 0.92f,
-            imagePath = "/storage/images/$id.jpg",
+            imagePaths = listOf("/storage/images/$id.jpg"),
+            primaryImagePath = "/storage/images/$id.jpg",
             location = Location("Village", "District", "State", 21.0, 74.5),
             synced = false
         )

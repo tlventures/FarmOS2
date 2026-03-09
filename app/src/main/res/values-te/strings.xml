@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">అగ్రిఎడ్జ్ లింక్</string>
+
+    <string name="ok">సరే</string>
+    <string name="cancel">రద్దు</string>
+    <string name="close">మూసివేయి</string>
+    <string name="save">సేవ్</string>
+    <string name="back">వెనక్కి</string>
+    <string name="retry">మళ్లీ ప్రయత్నించండి</string>
+
+    <string name="welcome_title">అగ్రిఎడ్జ్ లింక్‌కు స్వాగతం</string>
+    <string name="welcome_subtitle">ఏఐ ఆధారిత పంట రోగ నిర్ధారణ మరియు మార్కెట్ కనెక్టివిటీ</string>
+    <string name="diagnose_disease">రోగ నిర్ధారణ</string>
+    <string name="diagnose_description">పంట రోగాలను గుర్తించడానికి ఆకుకి ఫోటో తీయండి</string>
+    <string name="view_history">చరిత్ర చూడండి</string>
+    <string name="history_description">మీ గత నిర్ధారణలు మరియు చికిత్సలు చూడండి</string>
+    <string name="market">మార్కెట్</string>
+    <string name="market_description">కొనుగోలుదారులతో కలవండి మరియు సేవలను కనుగొనండి</string>
+
+    <string name="nav_home">హోమ్</string>
+    <string name="nav_diagnose">నిర్ధారణ</string>
+    <string name="nav_history">చరిత్ర</string>
+    <string name="nav_market">మార్కెట్</string>
+    <string name="nav_profile">ప్రొఫైల్</string>
+    <string name="nav_settings">సెట్టింగ్స్</string>
+    <string name="nav_notifications">నోటిఫికేషన్లు</string>
+    <string name="nav_logout">లాగ్ అవుట్</string>
+
+    <string name="settings_title">సెట్టింగ్స్</string>
+    <string name="language_settings">భాష</string>
+    <string name="select_language">భాషను ఎంచుకోండి</string>
+    <string name="sync_settings">సింక్ సెట్టింగ్స్</string>
+    <string name="wifi_only">వైఫైలో మాత్రమే సింక్ చేయండి</string>
+    <string name="auto_sync">ఆటోమేటిక్ సింక్</string>
+    <string name="notification_settings">నోటిఫికేషన్లు</string>
+    <string name="enable_notifications">నోటిఫికేషన్లు ఆన్ చేయండి</string>
+    <string name="transaction_notifications">లావాదేవీ అప్‌డేట్లు</string>
+    <string name="reminder_notifications">పికప్ రిమైండర్లు</string>
+
+    <string name="lang_english">English</string>
+    <string name="lang_hindi">हिंदी (Hindi)</string>
+    <string name="lang_telugu">తెలుగు (Telugu)</string>
+
+    <string name="menu">మెను</string>
+    <string name="guest_user">అతిథి వినియోగదారు</string>
+    <string name="app_language">యాప్ భాష</string>
+    <string name="wifi_only_subtitle">వైఫైకి కనెక్ట్ అయినప్పుడు మాత్రమే డేటా సింక్ చేయండి</string>
+    <string name="auto_sync_subtitle">బ్యాక్‌గ్రౌండ్‌లో ఆటోమేటిక్‌గా సింక్ చేయండి</string>
+    <string name="enable_notifications_subtitle">యాప్ నోటిఫికేషన్లు పొందండి</string>
+    <string name="transaction_notifications_subtitle">మార్కెట్ లావాదేవీలకు నోటిఫికేషన్లు</string>
+    <string name="reminder_notifications_subtitle">షెడ్యూల్ చేసిన పికప్‌లకు రిమైండర్లు</string>
+    <string name="about">గురించి</string>
+    <string name="app_version">యాప్ వెర్షన్</string>
+    <string name="terms_of_service">సేవా నిబంధనలు</string>
+    <string name="terms_subtitle">నిబంధనలు మరియు షరతులు చూడండి</string>
+    <string name="privacy_policy">గోప్యతా విధానం</string>
+    <string name="privacy_subtitle">గోప్యతా విధానం చూడండి</string>
+
+    <string name="search">శోధన</string>
+    <string name="search_listings">లిస్టింగ్‌లు శోధించండి...</string>
+    <string name="publish_sell_request">అమ్మక అభ్యర్థనను ప్రచురించండి</string>
+    <string name="sell_request_help">కొనుగోలుదారులకు చేరేందుకు పంట, పరిమాణం, అంచనా ధర, స్థలం మరియు ఫోటోలు పోస్ట్ చేయండి.</string>
+    <string name="create_sell_request">అమ్మక అభ్యర్థన సృష్టించండి</string>
+    <string name="buy_tab">కొను</string>
+    <string name="sell_tab">అమ్ము</string>
+    <string name="rent_tab">అద్దె</string>
+    <string name="farmer_assistant">రైతు సహాయకుడు</string>
+    <string name="assistant_prompt">వ్యవసాయ ప్రశ్నలను సందేశం, వాయిస్ మరియు ఐచ్చిక ఫోటోతో అడగండి.</string>
+    <string name="assistant_prompt_short">వాయిస్/సందేశం, ఫోటోతో అడగండి</string>
+    <string name="your_question">మీ ప్రశ్న</string>
+    <string name="add_photo">ఫోటో జోడించండి</string>
+    <string name="remove_photo">ఫోటో తొలగించండి</string>
+    <string name="photo_attached">ఫోటో జత చేయబడింది</string>
+    <string name="send_message">పంపు</string>
+    <string name="assistant_answer">సహాయకుడి సమాధానం</string>
+    <string name="enter_question">దయచేసి ప్రశ్న నమోదు చేయండి</string>
+    <string name="photo_uploaded">ఫోటో అప్లోడ్ అయ్యింది</string>
+    <string name="assistant_fallback_error">సహాయకుడి లోపం: %1$s</string>
+
+    <!-- Camera additions -->
+    <string name="capture_photo">ఫోటో తీయండి</string>
+    <string name="camera_permission_required">ఫోటో తీయడానికి కెమెరా అనుమతి అవసరం</string>
+    <string name="capture">తీయండి</string>
+    <string name="retake">మళ్లీ తీయండి</string>
+
+    <!-- Image Input Screen -->
+    <string name="image_input_title">పంట వ్యాధిని గుర్తించండి</string>
+    <string name="image_input_header">పంట చిత్రాలు అప్‌లోడ్ చేయండి</string>
+    <string name="image_input_description">ప్రభావిత పంటకు ఫోటో తీయండి లేదా అప్‌లోడ్ చేయండి. మా AI పంట మరియు వ్యాధిని స్వయంచాలకంగా గుర్తిస్తుంది.</string>
+    <string name="take_photo">ఫోటో తీయండి</string>
+    <string name="upload_from_gallery">గ్యాలరీ నుండి అప్‌లోడ్ చేయండి</string>
+    <string name="start_diagnosis">నిర్ధారణ ప్రారంభించండి</string>
+    <string name="remove_image">చిత్రాన్ని తొలగించండి</string>
+    <string name="add_more_images">మరిన్ని చిత్రాలు జోడించండి</string>
+    <string name="images_selected">%1$d చిత్రం(లు) ఎంచుకున్నారు</string>
+
+    <!-- Diagnosis Processing Stages -->
+    <string name="stage_validating">చిత్ర నాణ్యతను తనిఖీ చేస్తున్నారు…</string>
+    <string name="stage_recognizing">పంట రకాన్ని గుర్తిస్తున్నారు…</string>
+    <string name="stage_classifying">వ్యాధిని విశ్లేషిస్తున్నారు…</string>
+    <string name="stage_backend">నిపుణుల వ్యవస్థకు పంపిస్తున్నారు…</string>
+
+    <!-- Diagnosis Errors / Feedback -->
+    <string name="not_agriculture_error">ఈ చిత్రం పంట లేదా మొక్కకు సంబంధించినది కాదు. దయచేసి ప్రభావిత పంట ఆకు యొక్క స్పష్టమైన ఫోటో అప్‌లోడ్ చేయండి.</string>
+    <string name="further_analysis_needed">మరింత విశ్లేషణ అవసరం</string>
+    <string name="further_analysis_description">వ్యాధిని తగినంత నమ్మకంతో గుర్తించడం సాధ్యం కాలేదు. మరింత ఖచ్చితమైన నిర్ధారణ కోసం అదనపు చిత్రాలు అప్‌లోడ్ చేయండి.</string>
+    <string name="upload_more_images">మరిన్ని చిత్రాలు అప్‌లోడ్ చేయండి</string>
+    <string name="backend_analysis_used">నిపుణుల వ్యవస్థ (క్లౌడ్) ద్వారా విశ్లేషించబడింది</string>
+
+    <!-- Diagnosis Result Screen -->
+    <string name="diagnosis_result">నిర్ధారణ ఫలితం</string>
+    <string name="crop_detected">గుర్తించబడింది: %1$s</string>
+    <string name="confidence_score">నమ్మకం స్కోరు</string>
+    <string name="low_confidence_warning">తక్కువ నమ్మకం. ధృవీకరణ కోసం వ్యవసాయ నిపుణుడిని సంప్రదించండి.</string>
+    <string name="view_treatment">చికిత్స సిఫారసులు చూడండి</string>
+    <string name="read_aloud">బిగ్గరగా చదవండి</string>
+    <string name="crop_type_label">పంట రకం</string>
+    <string name="date_label">తేదీ</string>
+    <string name="location_label">స్థానం</string>
+    <string name="not_available">అందుబాటులో లేదు</string>
+    <string name="images_analyzed_label">విశ్లేషించిన చిత్రాలు</string>
+    <string name="diagnosed_image">నిర్ధారించబడిన పంట చిత్రం</string>
+</resources>

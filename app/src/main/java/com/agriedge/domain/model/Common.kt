@@ -23,8 +23,9 @@ enum class CropType {
     TOMATO,
     POTATO,
     COTTON,
-    SUGARCANE;
-    
+    SUGARCANE,
+    UNKNOWN;
+
     companion object {
         fun fromString(value: String): CropType? {
             return values().find { it.name.equals(value, ignoreCase = true) }
@@ -45,3 +46,20 @@ data class Prediction(
         require(confidence in 0f..1f) { "Confidence must be between 0 and 1" }
     }
 }
+
+/**
+ * Result of Stage 1 generic image recognition.
+ * Determines if an image is agriculture-related and attempts to detect the crop type.
+ */
+data class ImageRecognitionResult(
+    val isAgricultureRelated: Boolean,
+    val detectedCropType: CropType,
+    val cropConfidence: Float,
+    val topLabels: List<GenericLabel>,
+    val inferenceTime: Long
+)
+
+data class GenericLabel(
+    val name: String,
+    val confidence: Float
+)

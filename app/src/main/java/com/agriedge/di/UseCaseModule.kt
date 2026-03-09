@@ -2,6 +2,7 @@ package com.agriedge.di
 
 import com.agriedge.data.local.storage.ImageStorageManager
 import com.agriedge.data.ml.classifier.DiseaseClassifier
+import com.agriedge.data.ml.classifier.GenericImageClassifier
 import com.agriedge.data.ml.preprocessor.ImagePreprocessor
 import com.agriedge.domain.repository.DiagnosisRepository
 import com.agriedge.domain.repository.SyncQueueRepository
@@ -33,6 +34,7 @@ object UseCaseModule {
     @Singleton
     fun provideDiagnoseDiseaseUseCase(
         imagePreprocessor: ImagePreprocessor,
+        genericClassifier: GenericImageClassifier,
         diseaseClassifier: DiseaseClassifier,
         diagnosisRepository: DiagnosisRepository,
         imageStorageManager: ImageStorageManager,
@@ -40,6 +42,7 @@ object UseCaseModule {
     ): DiagnoseDiseaseUseCase {
         return DiagnoseDiseaseUseCase(
             imagePreprocessor = imagePreprocessor,
+            genericClassifier = genericClassifier,
             diseaseClassifier = diseaseClassifier,
             diagnosisRepository = diagnosisRepository,
             imageStorageManager = imageStorageManager,

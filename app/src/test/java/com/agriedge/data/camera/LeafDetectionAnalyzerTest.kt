@@ -3,18 +3,20 @@ package com.agriedge.data.camera
 import android.graphics.Bitmap
 import android.graphics.Color
 import androidx.camera.core.ImageProxy
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.verify
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.DisplayName
-import org.mockito.kotlin.*
 
 @DisplayName("LeafDetectionAnalyzer Tests")
 class LeafDetectionAnalyzerTest {
-    
-    private lateinit var guidanceMessages: MutableList<GuidanceMessage>
+
+    private lateinit var guidanceMessages: MutableList<String?>
     private lateinit var analyzer: LeafDetectionAnalyzer
-    
+
     @BeforeEach
     fun setup() {
         guidanceMessages = mutableListOf()
@@ -22,30 +24,26 @@ class LeafDetectionAnalyzerTest {
             guidanceMessages.add(message)
         }
     }
-    
+
     @Test
     @DisplayName("Should create analyzer with callback")
     fun testAnalyzerCreation() {
         assertNotNull(analyzer)
     }
-    
+
     @Test
     @DisplayName("Should invoke callback when analyzing image")
     fun testCallbackInvocation() {
-        val imageProxy = mock<ImageProxy>()
         val bitmap = createMockBitmap(1024, 1024, hasGreen = true)
-        
-        // Mock toBitmap extension
-        whenever(imageProxy.toBitmap()).thenReturn(bitmap)
-        
-        // Analyze image
+        val imageProxy = mockk<ImageProxy>(relaxed = true)
+        every { imageProxy.toBitmap() } returns bitmap
+
         analyzer.analyze(imageProxy)
-        
-        // Verify callback was invoked
+
         assertTrue(guidanceMessages.isNotEmpty())
-        verify(imageProxy).close()
+        verify { imageProxy.close() }
     }
-    
+
     @Test
     @DisplayName("Should detect when no leaf is present")
     fun testNoLeafDetection() {
@@ -54,11 +52,11 @@ class LeafDetectionAnalyzerTest {
             message = "No leaf detected",
             confidence = 0f
         )
-        
+
         assertEquals(GuidanceType.NO_LEAF_DETECTED, message.type)
         assertTrue(message.message.contains("leaf", ignoreCase = true))
     }
-    
+
     @Test
     @DisplayName("Should provide move closer guidance")
     fun testMoveCloserGuidance() {
@@ -67,11 +65,11 @@ class LeafDetectionAnalyzerTest {
             message = "Move closer",
             confidence = 0.6f
         )
-        
+
         assertEquals(GuidanceType.MOVE_CLOSER, message.type)
         assertTrue(message.message.contains("closer", ignoreCase = true))
     }
-    
+
     @Test
     @DisplayName("Should provide center leaf guidance")
     fun testCenterLeafGuidance() {
@@ -80,11 +78,11 @@ class LeafDetectionAnalyzerTest {
             message = "Center the leaf",
             confidence = 0.7f
         )
-        
+
         assertEquals(GuidanceType.CENTER_LEAF, message.type)
         assertTrue(message.message.contains("center", ignoreCase = true))
     }
-    
+
     @Test
     @DisplayName("Should provide improve lighting guidance")
     fun testImproveLightingGuidance() {
@@ -93,11 +91,11 @@ class LeafDetectionAnalyzerTest {
             message = "Improve lighting",
             confidence = 0.5f
         )
-        
+
         assertEquals(GuidanceType.IMPROVE_LIGHTING, message.type)
         assertTrue(message.message.contains("light", ignoreCase = true))
     }
-    
+
     @Test
     @DisplayName("Should provide ready to capture guidance")
     fun testReadyToCaptureGuidance() {
@@ -106,12 +104,12 @@ class LeafDetectionAnalyzerTest {
             message = "Ready to capture",
             confidence = 1.0f
         )
-        
+
         assertEquals(GuidanceType.READY_TO_CAPTURE, message.type)
         assertTrue(message.message.contains("ready", ignoreCase = true))
         assertEquals(1.0f, message.confidence)
     }
-    
+
     @Test
     @DisplayName("Should have confidence values between 0 and 1")
     fun testConfidenceRange() {
@@ -122,42 +120,32 @@ class LeafDetectionAnalyzerTest {
             GuidanceMessage(GuidanceType.IMPROVE_LIGHTING, "Test", 0.5f),
             GuidanceMessage(GuidanceType.READY_TO_CAPTURE, "Test", 1.0f)
         )
-        
+
         messages.forEach { message ->
             assertTrue(message.confidence >= 0f)
             assertTrue(message.confidence <= 1.0f)
         }
     }
-    
+
     @Test
     @DisplayName("Should close image proxy after analysis")
     fun testImageProxyClosing() {
-        val imageProxy = mock<ImageProxy>()
         val bitmap = createMockBitmap(1024, 1024, hasGreen = false)
-        
-        whenever(imageProxy.toBitmap()).thenReturn(bitmap)
-        
+        val imageProxy = mockk<ImageProxy>(relaxed = true)
+        every { imageProxy.toBitmap() } returns bitmap
+
         analyzer.analyze(imageProxy)
-        
-        verify(imageProxy).close()
+
+        verify { imageProxy.close() }
     }
-    
-    /**
-     * Helper function to create a mock bitmap.
-     */
+
     private fun createMockBitmap(width: Int, height: Int, hasGreen: Boolean): Bitmap {
-        val bitmap = mock<Bitmap>()
-        whenever(bitmap.width).thenReturn(width)
-        whenever(bitmap.height).thenReturn(height)
-        
-        whenever(bitmap.getPixel(any(), any())).thenAnswer {
-            if (hasGreen) {
-                Color.rgb(0, 128, 0)  // Green
-            } else {
-                Color.rgb(128, 128, 128)  // Gray
-            }
+        val bitmap = mockk<Bitmap>(relaxed = true)
+        every { bitmap.width } returns width
+        every { bitmap.height } returns height
+        every { bitmap.getPixel(any(), any()) } answers {
+            if (hasGreen) Color.rgb(0, 128, 0) else Color.rgb(128, 128, 128)
         }
-        
         return bitmap
     }
 }

@@ -6,12 +6,10 @@ import com.agriedge.domain.model.CropType
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
-import org.junit.After
-import org.junit.Before
-import org.junit.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
-import kotlin.test.assertTrue
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.Assertions.*
 
 /**
  * Unit tests for DiseaseClassifier
@@ -23,13 +21,13 @@ class DiseaseClassifierTest {
     private lateinit var context: Context
     private lateinit var classifier: DiseaseClassifier
     
-    @Before
+    @BeforeEach
     fun setup() {
         context = mockk(relaxed = true)
         classifier = DiseaseClassifier(context)
     }
     
-    @After
+    @AfterEach
     fun tearDown() {
         classifier.close()
     }

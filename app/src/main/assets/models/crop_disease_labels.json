@@ -1,0 +1,40 @@
+{
+  "labels": [
+    {
+      "id": "tomato_bacterial_spot",
+      "commonName": "Tomato Bacterial Spot",
+      "scientificName": "Xanthomonas spp.",
+      "localizedName": "टमाटर बैक्टीरियल स्पॉट",
+      "cropType": "TOMATO",
+      "description": "Bacterial infection causing dark leaf spots and fruit lesions.",
+      "symptoms": ["Small dark spots", "Leaf yellowing", "Fruit blemishes"]
+    },
+    {
+      "id": "tomato_early_blight",
+      "commonName": "Tomato Early Blight",
+      "scientificName": "Alternaria solani",
+      "localizedName": "टमाटर अगेती झुलसा",
+      "cropType": "TOMATO",
+      "description": "Fungal disease causing concentric target-like spots on older leaves.",
+      "symptoms": ["Concentric spots", "Lower leaf yellowing", "Defoliation"]
+    },
+    {
+      "id": "tomato_late_blight",
+      "commonName": "Tomato Late Blight",
+      "scientificName": "Phytophthora infestans",
+      "localizedName": "टमाटर पछेती झुलसा",
+      "cropType": "TOMATO",
+      "description": "Fast-spreading blight in cool and humid weather.",
+      "symptoms": ["Dark lesions", "White fungal growth", "Fruit rot"]
+    },
+    {
+      "id": "tomato_healthy",
+      "commonName": "Tomato Healthy",
+      "scientificName": "Solanum lycopersicum",
+      "localizedName": "स्वस्थ टमाटर पत्ती",
+      "cropType": "TOMATO",
+      "description": "No visible disease symptoms detected.",
+      "symptoms": ["Uniform green color", "No lesions", "No yellowing"]
+    }
+  ]
+}

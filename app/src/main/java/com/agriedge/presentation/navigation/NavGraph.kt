@@ -1,6 +1,10 @@
 package com.agriedge.presentation.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -8,17 +12,20 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.agriedge.presentation.auth.LoginScreen
 import com.agriedge.presentation.auth.RegisterScreen
+import com.agriedge.presentation.assistant.AssistantScreen
 import com.agriedge.presentation.coldstorage.ColdStorageDetailScreen
 import com.agriedge.presentation.coldstorage.ColdStorageScreen
 import com.agriedge.presentation.diagnosis.CameraScreen
-import com.agriedge.presentation.diagnosis.CropSelectionScreen
 import com.agriedge.presentation.diagnosis.DiagnosisHistoryScreen
 import com.agriedge.presentation.diagnosis.DiagnosisResultScreen
+import com.agriedge.presentation.diagnosis.ImageInputScreen
+import com.agriedge.presentation.diagnosis.ImageInputViewModel
 import com.agriedge.presentation.equipment.EquipmentDetailScreen
 import com.agriedge.presentation.equipment.EquipmentScreen
 import com.agriedge.presentation.home.HomeScreen
 import com.agriedge.presentation.market.MarketDetailScreen
 import com.agriedge.presentation.market.MarketScreen
+import com.agriedge.presentation.market.SellRequestScreen
 import com.agriedge.presentation.profile.ProfileScreen
 import com.agriedge.presentation.settings.SettingsScreen
 import com.agriedge.presentation.treatment.TreatmentDetailsScreen
@@ -28,7 +35,7 @@ sealed class Screen(val route: String) {
     object Register : Screen("register")
     object Home : Screen("home")
     object Profile : Screen("profile")
-    object CropSelection : Screen("crop_selection")
+    object ImageInput : Screen("image_input")
     object Camera : Screen("camera")
     object DiagnosisResult : Screen("diagnosis_result/{diagnosisId}") {
         fun createRoute(diagnosisId: String) = "diagnosis_result/$diagnosisId"
@@ -38,6 +45,8 @@ sealed class Screen(val route: String) {
     }
     object DiagnosisHistory : Screen("diagnosis_history")
     object Market : Screen("market")
+    object Assistant : Screen("assistant")
+    object SellProduce : Screen("market/sell")
     object MarketDetail : Screen("market/{listingId}") {
         fun createRoute(listingId: String) = "market/$listingId"
     }
@@ -74,7 +83,7 @@ fun NavGraph(
                 }
             )
         }
-        
+
         composable(Screen.Register.route) {
             RegisterScreen(
                 onNavigateToLogin = {
@@ -87,15 +96,15 @@ fun NavGraph(
                 }
             )
         }
-        
+
         composable(Screen.Profile.route) {
             ProfileScreen(navController = navController)
         }
-        
+
         composable(Screen.Home.route) {
             HomeScreen(
                 onNavigateToDiagnose = {
-                    navController.navigate(Screen.CropSelection.route)
+                    navController.navigate(Screen.ImageInput.route)
                 },
                 onNavigateToHistory = {
                     navController.navigate(Screen.DiagnosisHistory.route)
@@ -103,27 +112,61 @@ fun NavGraph(
                 onNavigateToMarket = {
                     navController.navigate(Screen.Market.route)
                 },
+                onNavigateToAssistant = {
+                    navController.navigate(Screen.Assistant.route)
+                },
+                onNavigateToProfile = {
+                    navController.navigate(Screen.Profile.route)
+                },
+                onNavigateToLanguage = {
+                    navController.navigate(Screen.Settings.route)
+                },
                 onOpenDrawer = onOpenDrawer
             )
         }
-        
-        composable(Screen.CropSelection.route) {
-            CropSelectionScreen(navController = navController)
-        }
-        
-        composable(Screen.Camera.route) {
-            CameraScreen(
-                onNavigateBack = {
-                    navController.popBackStack()
-                },
+
+        // --- Image Input Screen (replaces CropSelectionScreen) ---
+        // Crop type is now auto-detected via two-stage ML pipeline.
+        composable(Screen.ImageInput.route) { backStackEntry ->
+            val viewModel: ImageInputViewModel = hiltViewModel()
+
+            // Receive captured image path from Camera screen via SavedStateHandle
+            val capturedPath by backStackEntry.savedStateHandle
+                .getStateFlow<String?>("capturedImagePath", null)
+                .collectAsStateWithLifecycle()
+
+            LaunchedEffect(capturedPath) {
+                capturedPath?.let { path ->
+                    viewModel.onCameraImageCaptured(path)
+                    backStackEntry.savedStateHandle.remove<String>("capturedImagePath")
+                }
+            }
+
+            ImageInputScreen(
+                onNavigateBack = { navController.popBackStack() },
+                onNavigateToCamera = { navController.navigate(Screen.Camera.route) },
                 onDiagnosisComplete = { diagnosisId ->
                     navController.navigate(Screen.DiagnosisResult.createRoute(diagnosisId)) {
                         popUpTo(Screen.Home.route)
                     }
+                },
+                viewModel = viewModel
+            )
+        }
+
+        // --- Camera (capture-only; returns path to ImageInput via SavedStateHandle) ---
+        composable(Screen.Camera.route) {
+            CameraScreen(
+                onNavigateBack = { navController.popBackStack() },
+                onImageCaptured = { imagePath ->
+                    navController.previousBackStackEntry
+                        ?.savedStateHandle
+                        ?.set("capturedImagePath", imagePath)
+                    navController.popBackStack()
                 }
             )
         }
-        
+
         composable(
             route = Screen.DiagnosisResult.route,
             arguments = listOf(
@@ -136,10 +179,13 @@ fun NavGraph(
                 },
                 onNavigateToTreatment = { diseaseId ->
                     navController.navigate(Screen.TreatmentDetails.createRoute(diseaseId))
+                },
+                onNavigateToImageInput = {
+                    navController.navigate(Screen.ImageInput.route)
                 }
             )
         }
-        
+
         composable(
             route = Screen.TreatmentDetails.route,
             arguments = listOf(
@@ -152,7 +198,7 @@ fun NavGraph(
                 }
             )
         }
-        
+
         composable(Screen.DiagnosisHistory.route) {
             DiagnosisHistoryScreen(
                 onNavigateBack = {
@@ -163,11 +209,23 @@ fun NavGraph(
                 }
             )
         }
-        
+
         composable(Screen.Market.route) {
-            MarketScreen(navController = navController)
+            MarketScreen(
+                navController = navController,
+                onNavigateToProfile = { navController.navigate(Screen.Profile.route) },
+                onNavigateToLanguage = { navController.navigate(Screen.Settings.route) }
+            )
         }
-        
+
+        composable(Screen.SellProduce.route) {
+            SellRequestScreen(navController = navController)
+        }
+
+        composable(Screen.Assistant.route) {
+            AssistantScreen(navController = navController)
+        }
+
         composable(
             route = Screen.MarketDetail.route,
             arguments = listOf(
@@ -180,11 +238,11 @@ fun NavGraph(
                 navController = navController
             )
         }
-        
+
         composable(Screen.ColdStorage.route) {
             ColdStorageScreen(navController = navController)
         }
-        
+
         composable(
             route = Screen.ColdStorageDetail.route,
             arguments = listOf(
@@ -197,11 +255,11 @@ fun NavGraph(
                 navController = navController
             )
         }
-        
+
         composable(Screen.Equipment.route) {
             EquipmentScreen(navController = navController)
         }
-        
+
         composable(
             route = Screen.EquipmentDetail.route,
             arguments = listOf(
@@ -214,7 +272,7 @@ fun NavGraph(
                 navController = navController
             )
         }
-        
+
         composable(Screen.Settings.route) {
             SettingsScreen(navController = navController)
         }

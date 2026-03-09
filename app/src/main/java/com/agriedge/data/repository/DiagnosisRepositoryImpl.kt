@@ -81,22 +81,37 @@ class DiagnosisRepositoryImpl @Inject constructor(
  * Extension function to convert DiagnosisEntity to Diagnosis domain model.
  */
 private fun DiagnosisEntity.toDomainModel(): Diagnosis {
+    val resolvedCropType = CropType.fromString(cropType) ?: CropType.UNKNOWN
+
+    // Build full list of image paths
+    val allImagePaths = buildList {
+        add(imagePath)
+        additionalImagePaths?.let { json ->
+            try {
+                org.json.JSONArray(json).let { arr ->
+                    for (i in 0 until arr.length()) add(arr.getString(i))
+                }
+            } catch (_: Exception) { /* ignore malformed JSON */ }
+        }
+    }
+
     return Diagnosis(
         id = id,
         userId = userId,
         timestamp = timestamp,
-        cropType = CropType.fromString(cropType) ?: CropType.RICE,
+        cropType = resolvedCropType,
         disease = Disease(
             id = diseaseId,
             commonName = diseaseName,
             scientificName = scientificName,
             localizedName = diseaseNameLocal,
-            cropType = CropType.fromString(cropType) ?: CropType.RICE,
+            cropType = resolvedCropType,
             description = "", // Not stored in entity
             symptoms = emptyList() // Not stored in entity
         ),
         confidence = confidence,
-        imagePath = imagePath,
+        imagePaths = allImagePaths,
+        primaryImagePath = imagePath,
         location = if (latitude != null && longitude != null) {
             Location(
                 village = village ?: "",
@@ -106,7 +121,9 @@ private fun DiagnosisEntity.toDomainModel(): Diagnosis {
                 longitude = longitude
             )
         } else null,
-        synced = synced
+        synced = synced,
+        requiresFurtherAnalysis = requiresFurtherAnalysis,
+        backendFallbackUsed = backendFallbackUsed
     )
 }
 
@@ -114,6 +131,10 @@ private fun DiagnosisEntity.toDomainModel(): Diagnosis {
  * Extension function to convert Diagnosis domain model to DiagnosisEntity.
  */
 private fun Diagnosis.toEntity(): DiagnosisEntity {
+    val additionalPaths = if (imagePaths.size > 1) {
+        org.json.JSONArray(imagePaths.drop(1)).toString()
+    } else null
+
     return DiagnosisEntity(
         id = id,
         userId = userId,
@@ -124,13 +145,16 @@ private fun Diagnosis.toEntity(): DiagnosisEntity {
         diseaseNameLocal = disease.localizedName,
         scientificName = disease.scientificName,
         confidence = confidence,
-        imagePath = imagePath,
+        imagePath = primaryImagePath,
+        additionalImagePaths = additionalPaths,
         thumbnailPath = null, // Will be set by ImageStorageManager
         latitude = location?.latitude,
         longitude = location?.longitude,
         village = location?.village,
         district = location?.district,
         state = location?.state,
-        synced = synced
+        synced = synced,
+        requiresFurtherAnalysis = requiresFurtherAnalysis,
+        backendFallbackUsed = backendFallbackUsed
     )
 }

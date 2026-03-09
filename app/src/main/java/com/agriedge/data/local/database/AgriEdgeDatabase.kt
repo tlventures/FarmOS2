@@ -36,7 +36,7 @@ import net.sqlcipher.database.SupportFactory
         ProviderRatingEntity::class,
         SyncQueueItem::class
     ],
-    version = 1,
+    version = 2,
     exportSchema = true
 )
 @TypeConverters(Converters::class)

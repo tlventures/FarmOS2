@@ -17,6 +17,7 @@ android {
         versionName = "1.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        buildConfigField("String", "API_BASE_URL", "\"https://7u2bja81l5.execute-api.ap-south-1.amazonaws.com/dev/\"")
         vectorDrawables {
             useSupportLibrary = true
         }
@@ -48,18 +49,26 @@ android {
         )
     }
 
-    buildFeatures {
-        compose = true
-    }
-
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.4"
+    }
+
+    buildFeatures {
+        compose = true
+        buildConfig = true
     }
 
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            excludes += "META-INF/LICENSE.md"
+            excludes += "META-INF/LICENSE-notice.md"
         }
+    }
+
+    // Prevent AAPT from compressing TFLite model files (required for memory-mapped access)
+    androidResources {
+        noCompress += "tflite"
     }
 }
 
@@ -68,6 +77,7 @@ dependencies {
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
     implementation("androidx.activity:activity-compose:1.8.1")
+    implementation("androidx.appcompat:appcompat:1.7.0")
 
     // Jetpack Compose
     val composeBom = platform("androidx.compose:compose-bom:2023.10.01")
