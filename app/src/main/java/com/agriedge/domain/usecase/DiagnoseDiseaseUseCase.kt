@@ -189,9 +189,9 @@ class DiagnoseDiseaseUseCase @Inject constructor(
             Result.failure(e)
         } catch (e: ImageQualityException) {
             Result.failure(e)
-        } catch (e: Exception) {
-            Log.e(TAG, "Diagnosis failed", e)
-            Result.failure(DiagnosisException("Failed to diagnose disease: ${e.message}", e))
+        } catch (t: Throwable) {
+            Log.e(TAG, "Diagnosis failed", t)
+            Result.failure(DiagnosisException("Failed to diagnose disease: ${t.message}", t))
         }
     }
 

@@ -2,6 +2,7 @@ package com.agriedge.data.ml.classifier
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.os.Build
 import android.util.Log
 import com.agriedge.domain.model.ClassificationResult
 import com.agriedge.domain.model.CropType
@@ -90,11 +91,13 @@ class DiseaseClassifier @Inject constructor(
                 } catch (t: Throwable) {
                     // Some devices/runtime combos throw NoClassDefFoundError here.
                     gpuDelegate = null
-                    Log.w(TAG, "GPU delegate not available, using CPU/NNAPI", t)
+                    Log.w(TAG, "GPU delegate not available, using CPU", t)
                 }
-                
-                // Enable NNAPI as fallback
-                useNNAPI = true
+
+                // NNAPI only available from API 27 (Android 8.1); crashes on older versions
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                    useNNAPI = true
+                }
                 numThreads = NUM_THREADS
             }
             
@@ -122,10 +125,10 @@ class DiseaseClassifier @Inject constructor(
             )
             isInitialized = true
             
-        } catch (e: Exception) {
+        } catch (t: Throwable) {
             isInitialized = false
-            Log.e(TAG, "Failed to load production TFLite model", e)
-            throw e
+            Log.e(TAG, "Failed to load production TFLite model", t)
+            throw t
         }
     }
 
@@ -221,13 +224,14 @@ class DiseaseClassifier @Inject constructor(
             val r = ((pixel shr 16) and 0xFF)
             val g = ((pixel shr 8) and 0xFF)
             val b = (pixel and 0xFF)
-            
+
             // Normalize to [-1, 1] range
             inputBuffer.putFloat((r - IMAGE_MEAN) / IMAGE_STD)
             inputBuffer.putFloat((g - IMAGE_MEAN) / IMAGE_STD)
             inputBuffer.putFloat((b - IMAGE_MEAN) / IMAGE_STD)
         }
-        
+
+        inputBuffer.rewind()
         return inputBuffer
     }
     

@@ -128,6 +128,7 @@ class GenericImageClassifier @Inject constructor(
         }
 
         if (scaledBitmap != bitmap) scaledBitmap.recycle()
+        byteBuffer.rewind()
         return byteBuffer
     }
 

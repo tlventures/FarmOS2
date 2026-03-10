@@ -19,6 +19,7 @@ class ImagePreprocessor {
         private const val MIN_BLUR_VARIANCE = 100.0
         private const val MIN_RESOLUTION = 512
         private const val MIN_GREEN_PERCENTAGE = 0.30f
+        private const val MAX_BLUR_SIZE = 256 // downsample target for blur check
         
         // HSV thresholds for green detection
         private const val GREEN_HUE_MIN = 60f
@@ -116,13 +117,24 @@ class ImagePreprocessor {
     
     /**
      * Checks if image is blurry using Laplacian variance method.
-     * Higher variance indicates sharper image.
+     * Downsamples to MAX_BLUR_SIZE before processing to avoid OOM on full-res images.
      */
     private fun checkBlur(bitmap: Bitmap): QualityCheck {
-        // Convert to grayscale and calculate Laplacian variance
-        val grayscale = convertToGrayscale(bitmap)
+        // Downsample to at most 256×256 to avoid OOM and per-pixel JNI overhead
+        val blurBitmap = if (bitmap.width > MAX_BLUR_SIZE || bitmap.height > MAX_BLUR_SIZE) {
+            val scale = MAX_BLUR_SIZE.toFloat() / maxOf(bitmap.width, bitmap.height)
+            val w = (bitmap.width * scale).toInt().coerceAtLeast(1)
+            val h = (bitmap.height * scale).toInt().coerceAtLeast(1)
+            Bitmap.createScaledBitmap(bitmap, w, h, true)
+        } else {
+            bitmap
+        }
+
+        val grayscale = convertToGrayscale(blurBitmap)
+        if (blurBitmap !== bitmap) blurBitmap.recycle()
+
         val variance = calculateLaplacianVariance(grayscale)
-        
+
         return if (variance >= MIN_BLUR_VARIANCE) {
             QualityCheck(
                 passed = true,
@@ -203,26 +215,23 @@ class ImagePreprocessor {
     
     /**
      * Converts bitmap to grayscale for blur detection.
+     * Uses a single batch getPixels() call to avoid per-pixel JNI overhead.
      */
     private fun convertToGrayscale(bitmap: Bitmap): Array<IntArray> {
         val width = bitmap.width
         val height = bitmap.height
-        val grayscale = Array(height) { IntArray(width) }
-        
-        for (y in 0 until height) {
-            for (x in 0 until width) {
-                val pixel = bitmap.getPixel(x, y)
+        val pixels = IntArray(width * height)
+        bitmap.getPixels(pixels, 0, width, 0, 0, width, height)
+
+        return Array(height) { y ->
+            IntArray(width) { x ->
+                val pixel = pixels[y * width + x]
                 val r = Color.red(pixel)
                 val g = Color.green(pixel)
                 val b = Color.blue(pixel)
-                
-                // Convert to grayscale using luminosity method
-                val gray = (0.299 * r + 0.587 * g + 0.114 * b).toInt()
-                grayscale[y][x] = gray
+                (0.299 * r + 0.587 * g + 0.114 * b).toInt()
             }
         }
-        
-        return grayscale
     }
     
     /**
