@@ -91,7 +91,9 @@ abstract class AgriEdgeDatabase : RoomDatabase() {
                         db.execSQL("PRAGMA foreign_keys=ON")
                     }
                 })
-                .fallbackToDestructiveMigration() // For development - remove in production
+                // Allow destructive migration from v1 (pre-production dev builds) only.
+                // Any future version bump (v3+) must provide an explicit Migration.
+                .fallbackToDestructiveMigrationFrom(1)
                 .build()
         }
         

@@ -88,21 +88,19 @@ class GenericImageClassifier @Inject constructor(
     suspend fun classify(bitmap: Bitmap): ImageRecognitionResult {
         if (!isInitialized) initialize()
 
-        // If model failed to load, use heuristic fallback
-        if (interpreter == null) {
-            return heuristicClassify(bitmap)
-        }
-
         val startTime = System.currentTimeMillis()
 
         // Preprocess image
         val inputBuffer = preprocessImage(bitmap)
 
+        // Capture interpreter locally — falls back to heuristic if model failed or was closed
+        val interp = interpreter ?: return heuristicClassify(bitmap)
+
         // Dynamically size the output buffer from the model's own output tensor
         // (EfficientNet-Lite outputs 1000 classes; MobileNet V2 outputs 1001 with background)
-        val outputSize = interpreter!!.getOutputTensor(0).shape().last()
+        val outputSize = interp.getOutputTensor(0).shape().last()
         val outputArray = Array(1) { ByteArray(outputSize) }
-        interpreter!!.run(inputBuffer, outputArray)
+        interp.run(inputBuffer, outputArray)
 
         val inferenceTime = System.currentTimeMillis() - startTime
 

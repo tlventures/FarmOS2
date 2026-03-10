@@ -1,9 +1,15 @@
 # Add project specific ProGuard rules here.
 
-# Keep TensorFlow Lite classes
+# Keep TensorFlow Lite classes (including GPU delegate)
 -keep class org.tensorflow.lite.** { *; }
 -keep interface org.tensorflow.lite.** { *; }
+-keep class org.tensorflow.lite.gpu.** { *; }
 -dontwarn org.tensorflow.lite.**
+
+# Keep SQLCipher
+-keep class net.sqlcipher.** { *; }
+-keep interface net.sqlcipher.** { *; }
+-dontwarn net.sqlcipher.**
 
 # Keep Room classes
 -keep class * extends androidx.room.RoomDatabase
@@ -41,10 +47,10 @@
     <init>(...);
 }
 
-# Keep data classes and models
--keep class com.agriedge.link.domain.model.** { *; }
--keep class com.agriedge.link.data.remote.dto.** { *; }
--keep class com.agriedge.link.data.local.database.entity.** { *; }
+# Keep data classes and models (actual package paths — not com.agriedge.link.*)
+-keep class com.agriedge.domain.model.** { *; }
+-keep class com.agriedge.data.remote.dto.** { *; }
+-keep class com.agriedge.data.local.database.entity.** { *; }
 
 # Keep Kotlin metadata
 -keep class kotlin.Metadata { *; }
@@ -70,6 +76,12 @@
 -keepclassmembers class * extends androidx.work.Worker {
     public <init>(android.content.Context,androidx.work.WorkerParameters);
 }
+
+# Suppress missing annotation classes from Google Error Prone / Tink (compile-time only)
+-dontwarn com.google.errorprone.annotations.CanIgnoreReturnValue
+-dontwarn com.google.errorprone.annotations.CheckReturnValue
+-dontwarn com.google.errorprone.annotations.Immutable
+-dontwarn com.google.errorprone.annotations.RestrictedApi
 
 # Remove logging in release
 -assumenosideeffects class android.util.Log {
